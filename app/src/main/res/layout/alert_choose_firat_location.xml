@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="#ffffff">
+
+
+ <RelativeLayout
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:id="@+id/location_re"
+     android:layout_margin="6dp"
+     android:background="#c4daf7ca">
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:text="Location"
+         android:textSize="30sp"
+         android:layout_gravity="top"
+         android:layout_marginTop="4dp"
+         android:layout_marginLeft="4dp"
+         android:layout_marginRight="4dp"
+         android:textAlignment="center"
+         android:id="@+id/textView"
+         android:background="#ffffff" />
+     <Button
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:text="PICK!"
+         android:textSize="20sp"
+         android:layout_marginLeft="4dp"
+         android:layout_marginRight="4dp"
+         android:layout_marginBottom="4dp"
+         android:layout_marginTop="4dp"
+         android:layout_below="@+id/textView"
+         android:layout_alignParentStart="true"
+         android:background="#dee3cc66"
+         android:id="@+id/pickplace" />
+
+ </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/location_re"
+        android:id="@+id/departday_re"
+        android:layout_margin="6dp"
+        android:background="#bbeff99b">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Depart Day"
+            android:textSize="30sp"
+            android:layout_gravity="top"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textAlignment="center"
+            android:id="@+id/departday"
+            android:background="#ffffff" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/departday"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:background="#dee3cc66"
+            android:textSize="20sp"
+            android:layout_marginRight="4dp"
+            android:id="@+id/datepicker_first"
+            android:text="Choose a day!">
+        </Button>
+
+
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/departday_re"
+    android:id="@+id/depart_time"
+    android:layout_margin="6dp"
+    android:background="#bbeff99b">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Depart Time"
+            android:textSize="30sp"
+            android:layout_gravity="top"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textAlignment="center"
+            android:id="@+id/departtime"
+            android:background="#ffffff" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/departtime"
+            android:layout_marginTop="4dp"
+            android:background="#dee3cc66"
+            android:textSize="20sp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:id="@+id/timepicker_first"
+            android:text="Time">
+        </Button>
+
+
+</RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/depart_time"
+        android:id="@+id/time_duration"
+        android:layout_margin="6dp"
+        android:background="#bbeff99b">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Visit Duration"
+            android:textSize="30sp"
+            android:layout_gravity="top"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textAlignment="center"
+            android:id="@+id/time_duration_text"
+            android:background="#ffffff" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:inputType="time"
+            android:ems="10"
+            android:textSize="20sp"
+            android:background="#dee3cc66"
+            android:id="@+id/time_duration_edittext"
+            android:layout_below="@+id/time_duration_text"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textAlignment="center"
+            />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

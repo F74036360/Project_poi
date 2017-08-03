@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/re1">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/re2"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="POI Choice "
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textSize="23dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/POI_choice" />
+
+
+
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/re2">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
+                <ImageButton
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/restaurant"
+                    android:background="@drawable/restaurant"
+                    android:adjustViewBounds="true"
+                    android:layout_weight="1"/>
+                <ImageButton
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/salon"
+                    android:id="@+id/salon"
+                    android:adjustViewBounds="true"
+                    android:layout_weight="1"/>
+                <ImageButton
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/cafe"
+                    android:id="@+id/cafe"
+                    android:adjustViewBounds="true"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_weight="2.3">
+
+                <TextView
+                    android:layout_margin="5dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:id="@+id/text_restaurant"
+                    android:layout_gravity="top"
+                    android:textAlignment="center"
+                    android:text="餐廳"
+                    android:layout_weight="1"
+
+                    />
+                <TextView
+                    android:layout_margin="5dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:id="@+id/text_salon"
+                    android:layout_gravity="top"
+                    android:textAlignment="center"
+                    android:text="沙龍"
+                    android:layout_weight="1"
+                    />
+                <TextView
+                    android:layout_margin="5dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:id="@+id/text_cafe"
+                    android:layout_weight="1"
+                    android:layout_gravity="top"
+                    android:textAlignment="center"
+                    android:text="咖啡廳"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:id="@+id/text1">
+
+                <ImageButton
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/travelspot"
+                    android:background="@drawable/travel"
+                    android:adjustViewBounds="true"/>
+
+
+                <ImageButton
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/hospital"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/hospital"
+                    android:adjustViewBounds="true"/>
+
+
+
+                <ImageButton
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/hotel"
+                    android:id="@+id/hotel"
+                    android:adjustViewBounds="true"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="2.3"
+                >
+
+                <TextView
+                    android:layout_margin="5dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:id="@+id/text_travel"
+                    android:layout_gravity="top"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="景點"
+                    />
+
+                <TextView
+                    android:layout_margin="5dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:id="@+id/text_hospital"
+                    android:layout_weight="1"
+                    android:layout_gravity="top"
+                    android:textAlignment="center"
+                    android:text="醫院"
+                    />
+                <TextView
+                    android:layout_margin="5dp"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:id="@+id/text_hotel"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:layout_gravity="top"
+                    android:text="旅館"
+                    />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/bank"
+                    android:background="@drawable/bank"
+
+                    android:adjustViewBounds="true"/>
+
+
+
+                <ImageButton
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/book"
+                    android:id="@+id/bookstore"
+                    android:adjustViewBounds="true"/>
+
+
+                <ImageButton
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/mall"
+                    android:id="@+id/department_store"
+                    android:adjustViewBounds="true"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2.3"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/text_bank"
+                    android:text="銀行"
+                    android:textAlignment="center"
+                    android:layout_gravity="top" />
+
+
+                <TextView
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/text_bookstore"
+
+                    android:text="書局"
+
+                    android:textAlignment="center"
+                    android:layout_gravity="top" />
+
+                <TextView
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/text_shooping_store"
+
+                    android:text="賣場"
+
+                    android:textAlignment="center"
+                    android:layout_gravity="top" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1.3"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="center"
+                android:text="自訂"
+                android:layout_weight="2.0"
+                android:layout_margin="5dp"
+                android:layout_gravity="center"
+                android:gravity="center_vertical" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:layout_margin="5dp"
+                android:id="@+id/self_typed" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="確定"
+                android:layout_weight="2.0"
+                android:layout_gravity="center"
+                android:background="#e4f9dc"
+                android:layout_margin="5dp"
+                android:id="@+id/self_OK" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

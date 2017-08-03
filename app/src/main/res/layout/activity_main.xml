@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.example.joan.place.MainActivity">
+    android:id="@+id/idid"
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/abc_ab_share_pack_mtrl_alpha"
+        android:backgroundTintMode="src_atop"
+        android:id="@+id/linearLayout">
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/schedule"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/sechdule"
+            />
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/liked"
+            android:background="@drawable/like"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp" />
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/Createtrip_btn"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/create"
+            android:layout_marginRight="10dp"
+
+            android:layout_weight="0.08" />
+
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/goomap"
+            android:id="@+id/map" />
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/my"
+            android:id="@+id/account" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/for_change_view"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linearLayout">
+
+    </RelativeLayout>
+
+</RelativeLayout>
