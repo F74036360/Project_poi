@@ -37,8 +37,8 @@ public class PlaceDetail {
         String name = "-NA-";
         String icon = "-NA-";
         String vicinity="-NA-";
-        String latitude="";
-        String longitude="";
+        String latitude="-NA-";
+        String longitude="-NA-";
         String formatted_address="-NA-";
         String formatted_phone="-NA-";
         String website="-NA-";
@@ -58,9 +58,7 @@ public class PlaceDetail {
             }
 
             // Extracting Place Vicinity, if available
-            if(!jPlaceDetails.isNull("vicinity")){
-                vicinity = jPlaceDetails.getString("vicinity");
-            }
+
 
             // Extracting Place formatted_address, if available
             if(!jPlaceDetails.isNull("formatted_address")){
@@ -94,6 +92,9 @@ public class PlaceDetail {
 
             latitude = jPlaceDetails.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = jPlaceDetails.getJSONObject("geometry").getJSONObject("location").getString("lng");
+            //Log.e("lat",""+latitude);
+            ///Log.e("lng",""+longitude);
+
             ArrayList<String> myList = new ArrayList<String>();
             if(!jPlaceDetails.isNull("opening_hours"))
             {
@@ -111,7 +112,6 @@ public class PlaceDetail {
                                 break;
                             case 0:
                                 hPlaceDetails.put("Monday", temp);
-
                                 break;
                             case 1:
                                 hPlaceDetails.put("Tuesday", temp);
@@ -153,11 +153,8 @@ public class PlaceDetail {
                 hPlaceDetails.put("ref_photo",ref_photo);
             }
 
-
-
             hPlaceDetails.put("name", name);
             hPlaceDetails.put("icon", icon);
-            hPlaceDetails.put("vicinity", vicinity);
             hPlaceDetails.put("lat", latitude);
             hPlaceDetails.put("lng", longitude);
             hPlaceDetails.put("formatted_address", formatted_address);

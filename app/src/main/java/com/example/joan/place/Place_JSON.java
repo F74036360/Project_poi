@@ -51,6 +51,7 @@ public class Place_JSON {
         String longitude = "";
         String reference = "";
         String Place_id = "";
+        String rating="-NA-";
         try {
             // Extracting Place name, if available
             if (!jPlace.isNull("name")) {
@@ -60,6 +61,10 @@ public class Place_JSON {
             if (!jPlace.isNull("vicinity")) {
                 vicinity = jPlace.getString("vicinity");
             }
+            if(!jPlace.isNull("rating"))
+            {
+                rating=jPlace.getString("rating");
+            }
 
             latitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lng");
@@ -68,6 +73,7 @@ public class Place_JSON {
             place.put("place_name", placeName);
             place.put("vicinity", vicinity);
             place.put("lat", latitude);
+            place.put("rating",rating);
             place.put("lng", longitude);
             place.put("reference", reference);
             place.put("place_id", Place_id);
