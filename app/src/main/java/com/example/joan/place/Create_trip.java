@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,7 +85,7 @@ public class Create_trip extends Fragment {
     private Button all_OK;
     private Button add_POI;
     private GoogleApiClient client;
-    public List<HashMap<String, String>> mainlist = null;
+    public  List<HashMap<String, String>> mainlist = null;
     private ImageButton poiitem_restaurant;
     private ImageButton poiitem_travel;
     private ImageButton poiitem_bank;
@@ -94,7 +95,11 @@ public class Create_trip extends Fragment {
     private ImageButton poiitem_book;
     private ImageButton poiitem_cafe;
     private ImageButton poiitem_mall;
-
+    public  int middle=0;
+    int cnt_timeline=0;
+    int cnt_poi_set=0;
+    ArrayList<Date> timeLine=new ArrayList<>();
+    ArrayList<LatLng> all_latlng=new ArrayList<>();//from start to end
     //for poi reference
     public ArrayList<String> all_poi_name=new ArrayList<>();
     public ArrayList<String> all_poi_rating=new ArrayList<>();
@@ -109,6 +114,7 @@ public class Create_trip extends Fragment {
     //private  ImageView img_trip;
     public boolean found_best=false;
     public boolean allow_distance=false;
+    long when_to_get_middle=0;
     private Button poi_self_ok;
     private TextView POIchoice;
     private EditText self_choice_typed;
@@ -197,9 +203,9 @@ public class Create_trip extends Fragment {
                                 formatDate = setDateFormat(year, month, day);
                                 SimpleDateFormat dateFormat=new SimpleDateFormat("EEEE");
                                 Date date=new Date(year,month,day-1);
-                                Log.e(""+formatDate,""+dateFormat.format(date));
+                                //Log.e(""+formatDate,""+dateFormat.format(date));
                                 FirstWeekday=dateFormat.format(date);
-                                doSetDate.setText(""+year+"-"+month+"-"+day);
+                                doSetDate.setText(""+year+"-"+(month+1)+"-"+day);
                             }
 
 
@@ -224,8 +230,9 @@ public class Create_trip extends Fragment {
                                 SimpleDateFormat time=new SimpleDateFormat("hh:mm aa");
                                 Time tme = new Time(hourOfDay,minute,0);//seconds by default set to zero
                                 first_time_set=time.format(tme);
-                                Log.e("time",""+time.format(tme));
+                                //Log.e("time",""+time.format(tme));
                                 doSetTime.setText(""+time.format(tme));
+
 
                             }
                         }, hour, minute, false).show();
@@ -244,7 +251,7 @@ public class Create_trip extends Fragment {
                 SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
                 try {
                     Date time = simpleDateFormat.parse("00:30");
-                    Log.e("poi_time",""+time);
+                    //Log.e("poi_time",""+time);
                     POI_length_list.add(time);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -253,18 +260,6 @@ public class Create_trip extends Fragment {
             }
         });
 
-        Matrix.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LatLng L1=new LatLng(22.999687,120.218095);
-                LatLng L2=new LatLng(22.992621,120.213365);
-                String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+L1.latitude+","+L1.longitude +
-                        "&destinations="+L2.latitude+","+L2.longitude +
-                        "&key=AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
-                Distance_Matrix task = new Distance_Matrix();
-                task.execute(url);
-            }
-        });
 
         lastLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,6 +295,7 @@ public class Create_trip extends Fragment {
                     @Override
                     public void onClick(View view) {
                         lastLocation.setText(first_place_msg);
+                        lastplace=firstplace;
                     }
                 });
 
@@ -310,7 +306,7 @@ public class Create_trip extends Fragment {
                     public void onClick(View view) {
                         final Calendar c = Calendar.getInstance();
                         mYear = c.get(Calendar.YEAR);
-                        mMonth = c.get(Calendar.MONTH);
+                        mMonth = c.get(Calendar.MONTH+1);
                         mDate = c.get(Calendar.DAY_OF_MONTH);
                         new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -347,11 +343,55 @@ public class Create_trip extends Fragment {
         });
 
         all_OK.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
-                String url = getUrl(firstplace.getLatLng(), POI_choice_list.get(0));
-                PlacesTask task = new PlacesTask();
-                task.execute(url);
+
+                if(firstplace.getName()==lastplace.getName())
+                {
+                    int all_place=POI_choice_list.size()+1;
+                    middle=all_place/2;//1
+                   // Log.e("middle",""+middle);
+                    SimpleDateFormat s1=new SimpleDateFormat("ss");
+                    SimpleDateFormat s2=new SimpleDateFormat("HH:mm");
+
+                    try {
+                        Date timeS=s2.parse(first_time_set);
+                        when_to_get_middle=timeS.getTime();
+
+                        for(int i=0;i<middle-1;i++)
+                        {
+                            Date path=s1.parse(String.valueOf(POI_length_list.get(i)));
+                            when_to_get_middle+=path.getTime();
+                        }
+                        timeLine.add(new SimpleDateFormat("HH:mm").parse(s2.format(when_to_get_middle)));
+                        for(int i=middle-1;i<POI_length_list.size();i++)
+                        {
+                            when_to_get_middle+=POI_length_list.get(i).getTime();
+                            timeLine.add(new SimpleDateFormat("HH:mm").parse(s2.format(when_to_get_middle)));
+                        }
+                        for(int i=0;i<timeLine.size();i++)
+                        {
+                            //Log.e("timeLine: "+i,""+timeLine.get(i));
+                        }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    //Date time3 = new SimpleDateFormat("HH:mm").parse(s2.format(time));
+                    String url = getUrl(firstplace.getLatLng(), POI_choice_list.get(middle-1),2000,0);
+                    PlacesTask task = new PlacesTask();
+                    task.execute(url);
+
+                }
+                else
+                {
+                    int all_place=POI_choice_list.size()+2;
+                    middle=all_place/2;
+                   // Log.e("middle",""+middle);
+                }
+
+
 
             }
         });
@@ -362,17 +402,34 @@ public class Create_trip extends Fragment {
         return Mainview;
     }
 
-    private String getUrl(LatLng latlng, String nearbyPlace) {
+    private String getUrl(LatLng latlng, String nearbyPlace,int radius,int rankby) {
+        //rankby=0:by prominence
+        //rankby=1:by distance
+        if(rankby==0)
+        {
+            StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+            googlePlacesUrl.append("location=" + latlng.latitude + "," + latlng.longitude);
+            googlePlacesUrl.append("&radius="+radius);
+            googlePlacesUrl.append("&rankby=prominence");
+            googlePlacesUrl.append("&keyword=" + nearbyPlace);
+            googlePlacesUrl.append("&sensor=true");
+            googlePlacesUrl.append("&key=" + "AIzaSyC5FS4Ar74vSPSCJZ20FPVOcuaQUWl82PE");
+            //Log.d("getUrl", googlePlacesUrl.toString());
+            return (googlePlacesUrl.toString());
+        }
+        else
+        {
+            StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+            googlePlacesUrl.append("location=" + latlng.latitude + "," + latlng.longitude);
+            googlePlacesUrl.append("&rankby=distance");
+            googlePlacesUrl.append("&keyword=" + nearbyPlace);
+            googlePlacesUrl.append("&sensor=true");
+            googlePlacesUrl.append("&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc");
+           // Log.d("getUrl", googlePlacesUrl.toString());
+            return (googlePlacesUrl.toString());
+        }
 
-        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        googlePlacesUrl.append("location=" + latlng.latitude + "," + latlng.longitude);
-        googlePlacesUrl.append("&radius=2000");
-        googlePlacesUrl.append("&rankby=prominence");
-        googlePlacesUrl.append("&keyword=" + nearbyPlace);
-        googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc");
-        //Log.d("getUrl", googlePlacesUrl.toString());
-        return (googlePlacesUrl.toString());
+
     }
 
 
@@ -397,6 +454,7 @@ public class Create_trip extends Fragment {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 firstplace = PlacePicker.getPlace(data, getActivity());
+                all_latlng.add(firstplace.getLatLng());
                 first_place_msg = String.format("%s", firstplace.getName());
                 pickplace.setText(first_place_msg);
                 createfirst.setText(first_place_msg);
@@ -504,8 +562,8 @@ public class Create_trip extends Fragment {
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/details/json?");
         googlePlacesUrl.append("placeid=" + Place_id);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc");
-        //Log.d("getUrl", googlePlacesUrl.toString());
+        googlePlacesUrl.append("&key=" + "AIzaSyC5FS4Ar74vSPSCJZ20FPVOcuaQUWl82PE");
+      //  Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }
 
@@ -639,16 +697,48 @@ public class Create_trip extends Fragment {
                 HashMap<String, String> Matrix_info = list.get(i);
                 Log.e("distance text",""+Matrix_info.get("distance_text"));
                 Log.e("duration text",""+Matrix_info.get("duration_text"));
-                Date time;
+                Date time_duration;
                 SimpleDateFormat s1=new SimpleDateFormat("ss");
                 SimpleDateFormat s2=new SimpleDateFormat("HH:mm");
                 try {
-                    time=s1.parse(Matrix_info.get("duration_value"));
-                    Date time3 = new SimpleDateFormat("HH:mm").parse(s2.format(time));
-                    Date setTime=s2.parse(first_time_set);
-                    long time4=setTime.getTime()+time3.getTime();
-                    Date date3 = new SimpleDateFormat("HH:mm").parse(s2.format(time4));
-                    Log.e("time3",""+date3);
+                    time_duration=s1.parse(Matrix_info.get("duration_value"));
+                    Date time_Duration = new SimpleDateFormat("HH:mm").parse(s2.format(time_duration));
+                    Date timelineori=timeLine.get(cnt_timeline);
+                    for(int j=cnt_timeline;j<timeLine.size();j++)
+                    {
+                        Date setTime= new SimpleDateFormat("HH:mm").parse(s2.format(timeLine.get(j)));
+                        long timeline_s=setTime.getTime()+time_Duration.getTime();
+                        Date change_timeline = new SimpleDateFormat("HH:mm").parse(s2.format(timeline_s));
+                        //Log.e("original",""+timeLine.get(j));
+                        timeLine.set(j,change_timeline);
+                        //Log.e("changed",""+timeLine.get(j));
+                    }
+                   // timeLine.add(cnt_timeline,timelineori);
+
+                    cnt_timeline+=1;
+                    if(cnt_timeline+1<timeLine.size())
+                    {
+                        //int radius=Integer.parseInt(Matrix_info.get("distance_value"))/2;
+                        int cntpoiset=all_poi_latlng.size();
+                        found_best=false;
+                        LatLng latLng=new LatLng((all_latlng.get(0).latitude+all_latlng.get(1).latitude)/2,(all_latlng.get(0).longitude+all_latlng.get(1).longitude)/2);
+                        String url = getUrl(latLng, POI_choice_list.get(cntpoiset),0,1);
+                        PlacesTask task = new PlacesTask();
+                        task.execute(url);
+                    }
+
+                    else
+                    {
+                        //Log.e("all done","");
+                        //for(int j=0;j<all_poi_name.size();j++)Log.e("name",""+all_poi_name.get(j));
+                        myAdapter = new MyAdapter(all_poi_name, all_poi_photo, all_poi_latlng);
+                        RecyclerView mList = (RecyclerView) Mainview.findViewById(R.id.list_view);
+                        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+                        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                        mList.setLayoutManager(layoutManager);
+                        mList.setAdapter(myAdapter);
+                    }
+
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -702,8 +792,8 @@ public class Create_trip extends Fragment {
             for (int i = 0; i < list.size(); i++) {
                 // Getting a place from the places list
                 HashMap<String, String> hmPlace = list.get(i);
-                // Getting latitude of the place
-
+                if(hmPlace.get("place_name")!=null){
+                }
                 if(hmPlace.get("place_id")!=null)
                 {
                     String url = getUrl_detail(hmPlace.get("place_id").toString());
@@ -754,7 +844,6 @@ public class Create_trip extends Fragment {
 
             HashMap<String, String> hPlaceDetails = null;
             PlaceDetail placeDetailsJsonParser = new PlaceDetail();
-
             try {
                 jObject = new JSONObject(jsonData[0]);
                 hPlaceDetails = placeDetailsJsonParser.parse(jObject);
@@ -763,7 +852,7 @@ public class Create_trip extends Fragment {
                 {
                     rating=Double.parseDouble(hPlaceDetails.get("rating"));
                 }
-                if(hPlaceDetails.get(FirstWeekday).compareTo("null")!=0&&rating>=3.5)
+                if(hPlaceDetails.get(FirstWeekday).compareTo("null")!=0&&rating>=3.0)
                 {
                     String opening_hour=hPlaceDetails.get(FirstWeekday);
                     String[] separated = opening_hour.split(": ");
@@ -772,81 +861,49 @@ public class Create_trip extends Fragment {
                         String[] time=separated[1].split(",");
                         for(int i=0;i<time.length;i++)
                         {
-                            //Log.e("time "+i,""+time[i]);
-                            if(first_time_set.contains("AM"))
+                            if(time[i].compareTo("Open 24 hours")!=0)
                             {
-                                if(time[i].compareTo("Open 24 hours")!=0)
+                                String[] timelength=time[i].split(" – ");
+                                if(timelength[0].contains("AM")==false&&timelength[0].contains("PM")==false)
                                 {
-                                    String[] timelength=time[i].split(" – ");
-                                    if(timelength[0].contains("AM")==false&&timelength[0].contains("PM")==false)
-                                    {
-                                        if(timelength[1].contains("AM")==true)timelength[0]+="AM";
-                                        else timelength[0]+="PM";
-                                    }
+                                    if(timelength[1].contains("AM")==true)timelength[0]+="AM";
+                                    else timelength[0]+="PM";
+                                }
 
-                                    SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm");
-                                    SimpleDateFormat parseFormat = new SimpleDateFormat("hh:mm a");
-                                    Date open_start = parseFormat.parse(timelength[0]);
-                                    Date end_time=parseFormat.parse(timelength[1]);
-                                    Date setTime=parseFormat.parse(first_time_set);
-                                    Date time1 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(open_start));
-                                    Date time2 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(end_time));
-                                    Date time3 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(setTime));
-                                    if (time3.after(time1) && time3.before(time2)) {
-                                        found_best=true;
-                                        allow_distance=true;
-                                        Log.e("into here","yaya");
-                                        Log.e("name",""+hPlaceDetails.get("name"));
-                                        Log.e("rating",""+hPlaceDetails.get("rating"));
-                                        all_poi_name.add(hPlaceDetails.get("name"));
+                                SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm");
+                                SimpleDateFormat parseFormat = new SimpleDateFormat("hh:mm a");
+                                Date open_start = parseFormat.parse(timelength[0]);
+                                Date end_time=parseFormat.parse(timelength[1]);
+                                //Date setTimeS=parseFormat.parse(String.valueOf(timeLine.get(cnt_timeline)));
+                                //Date setTimeE=parseFormat.parse(String.valueOf(timeLine.get(cnt_timeline+1)));
+                                Date time1 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(open_start));
+                                Date time2 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(end_time));
+                                Date timeS = new SimpleDateFormat("HH:mm").parse(displayFormat.format(timeLine.get(cnt_timeline)));
+                                Date timeE = new SimpleDateFormat("HH:mm").parse(displayFormat.format(timeLine.get(cnt_timeline+1)));
+                                if (timeS.after(time1) && timeS.before(time2) && timeE.before(time2)) {
+                                    found_best=true;
+                                    allow_distance=true;
 
-                                        String photo = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photoreference="
-                                                + hPlaceDetails.get("ref_photo") + "&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
-                                        all_poi_photo.add(photo);
-                                        double lat = Double.parseDouble(hPlaceDetails.get("lat"));
-                                        double lng = Double.parseDouble(hPlaceDetails.get("lng"));
-                                        Log.e("lat in main",""+lat);
-                                        Log.e("lng in main",""+lng);
-                                        all_poi_latlng.add(new LatLng(lat,lng));
-                                        all_poi_rating.add(hPlaceDetails.get("rating"));
-                                        all_poi_address.add(hPlaceDetails.get("address"));
-                                        all_poi_phone.add(hPlaceDetails.get("formatted_phone"));
-                                        all_poi_website.add(hPlaceDetails.get("website"));
-                                        all_poi_openingtime.add(hPlaceDetails.get("FirstWeekday"));
-                                        LatLng L1=firstplace.getLatLng();
-                                        LatLng L2=all_poi_latlng.get(0);
+                                    //Log.e("name",""+hPlaceDetails.get("name"));
+                                    //Log.e("rating",""+hPlaceDetails.get("rating"));
+                                    all_poi_name.add(hPlaceDetails.get("name"));
+                                    String photo = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photoreference="
+                                            + hPlaceDetails.get("ref_photo") + "&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
+                                    all_poi_photo.add(photo);
 
-                                    }
-
+                                    double lat = Double.parseDouble(hPlaceDetails.get("lat"));
+                                    double lng = Double.parseDouble(hPlaceDetails.get("lng"));
+                                    all_poi_latlng.add(new LatLng(lat,lng));
+                                    all_latlng.add(new LatLng(lat,lng));
+                                    all_poi_rating.add(hPlaceDetails.get("rating"));
+                                    all_poi_address.add(hPlaceDetails.get("address"));
+                                    all_poi_phone.add(hPlaceDetails.get("formatted_phone"));
+                                    all_poi_website.add(hPlaceDetails.get("website"));
+                                    all_poi_openingtime.add(hPlaceDetails.get(FirstWeekday));
 
                                 }
                             }
-                            else if(first_time_set.contains("PM"))
-                            {
-                                if(time[i].compareTo("Open 24 hours")!=0)
-                                {
-                                    String[] timelength=time[i].split(" – ");
-                                    if(timelength[0].contains("AM")==false&&timelength[0].contains("PM")==false)
-                                    {
-                                        if(timelength[1].contains("AM")==true)timelength[0]+="AM";
-                                        else timelength[0]+="PM";
-                                    }
 
-                                    SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm");
-                                    SimpleDateFormat parseFormat = new SimpleDateFormat("hh:mm a");
-                                    Date open_start = parseFormat.parse(timelength[0]);
-                                    Date end_time=parseFormat.parse(timelength[1]);
-                                    Date setTime=parseFormat.parse(first_time_set);
-                                    Date time1 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(open_start));
-                                    Date time2 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(end_time));
-                                    Date time3 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(setTime));
-                                    if (time3.after(time1) && time3.before(time2)) {
-                                        Log.e("True","yaya");
-                                    }
-
-
-                                }
-                            }
                         }
 
 
@@ -866,8 +923,16 @@ public class Create_trip extends Fragment {
             if(allow_distance==true)
             {
                 allow_distance=false;
-                LatLng L1=firstplace.getLatLng();
-                LatLng L2=all_poi_latlng.get(0);
+                //Log.e("all latlng size",""+all_latlng.size());
+                double temp=all_latlng.size()/2.0;
+                //Log.e("temp",""+temp);
+                double all_latlng_size= Math.ceil(temp);
+               // Log.e("all latlng size(double)",""+all_latlng_size);
+                int all_latlng_size1=(int)all_latlng_size;
+              //  Log.e("all latlng size(int)",""+all_latlng_size1);
+                LatLng L1=all_latlng.get(all_latlng_size1-1);
+                LatLng L2=all_latlng.get(all_latlng_size1);
+
                 String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+L1.latitude+","+L1.longitude +
                         "&destinations="+L2.latitude+","+L2.longitude +
                         "&key=AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
@@ -902,12 +967,23 @@ public class Create_trip extends Fragment {
             public ImageView IMG;
             public MapView mapView;
             public GoogleMap MgoogleMap;
-
+            public TextView webview;
+            public TextView phoneview;
+            public TextView rankview;
+            public TextView openingview;
+            public TextView starttime;
+            public TextView endtime;
             public ViewHolder(View v) {
                 super(v);
                 mTextView = (TextView) v.findViewById(R.id.info_text);
                 IMG = (ImageView) v.findViewById(R.id.img);
                 mapView = (MapView) v.findViewById(R.id.map_card);
+                webview=(TextView)v.findViewById(R.id.website);
+                phoneview=(TextView)v.findViewById(R.id.phone);
+                rankview=(TextView)v.findViewById(R.id.rank);
+                openingview=(TextView)v.findViewById(R.id.opening_time);
+                starttime=(TextView)v.findViewById(R.id.starttime);
+                endtime=(TextView)v.findViewById(R.id.endtime);
             }
 
             @Override
@@ -933,12 +1009,38 @@ public class Create_trip extends Fragment {
             return vh;
         }
 
+        @TargetApi(Build.VERSION_CODES.N)
         @Override
         public void onBindViewHolder(ViewHolder holder, final int position) {
             holder.mTextView.setText(mData.get(position));
-            Picasso.with(getContext()).load(photodata.get(position)).resize(1000, 600)
+            Picasso.with(getContext()).load(photodata.get(position)).resize(2000,1600)
                     .into(holder.IMG);
+            holder.rankview.setText("評分: "+all_poi_rating.get(position));
+            holder.openingview.setText(all_poi_openingtime.get(position));
+            holder.phoneview.setText(all_poi_phone.get(position));
+            holder.webview.setAutoLinkMask(Linkify.ALL);
+            holder.webview.setText(all_poi_website.get(position));
+
+            SimpleDateFormat s2=new SimpleDateFormat("HH:mm");
+           // SimpleDateFormat s1=new SimpleDateFormat("ss");
+            holder.starttime.setText("抵達時間"+s2.format(timeLine.get(position)));
+            try {
+                Date timeS=s2.parse(s2.format(timeLine.get(position)));
+                when_to_get_middle=timeS.getTime();
+                Date path=s2.parse(s2.format(POI_length_list.get(position)));
+                when_to_get_middle+=path.getTime();
+                //Log.e("middle",""+s2.format(when_to_get_middle));
+                holder.endtime.setText("離開時間"+s2.format(when_to_get_middle));
+
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            // holder.starttime.setText(new SimpleDateFormat("HH:mm").format(timeLine.get(position)));
+           // holder.endtime.setText(new SimpleDateFormat("HH:mm").format(timeLine.get(position+1)));
             holder.mapView.onCreate(null);
+            holder.mapView.setClickable(false);
             holder.mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
@@ -947,14 +1049,7 @@ public class Create_trip extends Fragment {
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
                 }
-            });
-            holder.mapView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    MapsActivity maps = new MapsActivity(latLngs.get(position));
-                    Intent intent = new Intent(getActivity(), maps.getClass());
-                    startActivity(intent);
-                }
+
             });
 
 
@@ -999,7 +1094,6 @@ public class Create_trip extends Fragment {
         @TargetApi(Build.VERSION_CODES.N)
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
-
 
             holder.poi_choice.setText(POI_choice_list.get(position));
             holder.poi_choice.setOnClickListener(new View.OnClickListener() {
@@ -1054,7 +1148,7 @@ public class Create_trip extends Fragment {
                         case 0:
                             try {
                                 time = simpleDateFormat.parse("00:30");
-                                Log.e("time",""+time);
+                                //Log.e("time",""+time);
                                 POI_length_list.set(position,time);
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -1063,7 +1157,7 @@ public class Create_trip extends Fragment {
                         case 1:
                             try {
                                 time = simpleDateFormat.parse("01:00");
-                                Log.e("time",""+time);
+                                //Log.e("time",""+time);
                                 POI_length_list.set(position,time);
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -1073,7 +1167,7 @@ public class Create_trip extends Fragment {
                         case 2:
                             try {
                                 time = simpleDateFormat.parse("01:30");
-                                Log.e("time",""+time);
+                                //Log.e("time",""+time);
                                 POI_length_list.set(position,time);
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -1082,7 +1176,8 @@ public class Create_trip extends Fragment {
                         case 3:
                             try {
                                 time = simpleDateFormat.parse("02:00");
-                                Log.e("time",""+time);POI_length_list.set(position,time);
+                               // Log.e("time",""+time);
+                                POI_length_list.set(position,time);
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
@@ -1090,7 +1185,7 @@ public class Create_trip extends Fragment {
                         case 4:
                             try {
                                 time = simpleDateFormat.parse("03:00");
-                                Log.e("time",""+time);
+                                //Log.e("time",""+time);
                                 POI_length_list.set(position,time);
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -1099,7 +1194,8 @@ public class Create_trip extends Fragment {
                         case 5:
                             try {
                                 time = simpleDateFormat.parse("06:00");
-                                Log.e("time",""+time);POI_length_list.set(position,time);
+                                //Log.e("time",""+time);
+                                POI_length_list.set(position,time);
 
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -1108,7 +1204,7 @@ public class Create_trip extends Fragment {
                         case 6:
                             try {
                                 time = simpleDateFormat.parse("08:00");
-                                Log.e("time",""+time);
+                                //Log.e("time",""+time);
                                 POI_length_list.set(position,time);
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -1117,7 +1213,7 @@ public class Create_trip extends Fragment {
                         case 7:
                             try {
                                 time = simpleDateFormat.parse("12:00");
-                                Log.e("time",""+time);
+                                //Log.e("time",""+time);
                                 POI_length_list.set(position,time);
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -1134,7 +1230,7 @@ public class Create_trip extends Fragment {
                     SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
                     try {
                         Date time = simpleDateFormat.parse("00:30");
-                        Log.e("time",""+time);
+                       // Log.e("time",""+time);
                         POI_length_list.set(position,time);
                     } catch (ParseException e) {
                         e.printStackTrace();

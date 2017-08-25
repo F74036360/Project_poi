@@ -15,7 +15,6 @@ public class PlaceDetail {
 
     /** Receives a JSONObject and returns a list */
     public HashMap<String,String> parse(JSONObject jObject){
-
         JSONObject jPlaceDetails = null;
         try {
             /** Retrieves all the elements in the 'places' array */
@@ -94,6 +93,7 @@ public class PlaceDetail {
             longitude = jPlaceDetails.getJSONObject("geometry").getJSONObject("location").getString("lng");
             //Log.e("lat",""+latitude);
             ///Log.e("lng",""+longitude);
+            //Log.e("name",""+name);
 
             ArrayList<String> myList = new ArrayList<String>();
             if(!jPlaceDetails.isNull("opening_hours"))
@@ -109,24 +109,31 @@ public class PlaceDetail {
                         {
                             case 6:
                                 hPlaceDetails.put("Sunday",temp);
+                                //Log.e("7",""+temp);
                                 break;
                             case 0:
                                 hPlaceDetails.put("Monday", temp);
+                                //Log.e("1",""+temp);
                                 break;
                             case 1:
                                 hPlaceDetails.put("Tuesday", temp);
+                                //Log.e("2",""+temp);
                                 break;
                             case 2:
                                 hPlaceDetails.put("Wednesday", temp);
+                                //Log.e("3",""+temp);
                                 break;
                             case 3:
                                 hPlaceDetails.put("Thursday", temp);
+                                //Log.e("4",""+temp);
                                 break;
                             case 4:
                                 hPlaceDetails.put("Friday", temp);
+                                //Log.e("5",""+temp);
                                 break;
                             case 5:
                                 hPlaceDetails.put("Saturday", temp);
+                                //Log.e("6",""+temp);
                                 break;
 
                         }
@@ -163,6 +170,7 @@ public class PlaceDetail {
             hPlaceDetails.put("rating", rating);
             hPlaceDetails.put("international_phone_number", international_phone_number);
             hPlaceDetails.put("url", url);
+
 
         } catch (JSONException e) {
             e.printStackTrace();

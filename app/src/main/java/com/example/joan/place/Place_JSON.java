@@ -71,6 +71,7 @@ public class Place_JSON {
             reference = jPlace.getString("reference");
             Place_id = jPlace.getString("place_id");
             place.put("place_name", placeName);
+            //Log.e("placename",""+placeName);
             place.put("vicinity", vicinity);
             place.put("lat", latitude);
             place.put("rating",rating);
