@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.joan.place.Create_trip"
     android:id="@+id/createtrip">
 
@@ -18,17 +19,6 @@
         android:layout_marginBottom="3dp"
         android:id="@+id/linearintrip">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Matrix"
-            android:background="#d0dca1"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            android:id="@+id/Matrix" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,6 +43,8 @@
         android:layout_below="@+id/upper"
         android:id="@+id/trip_recycle"
         android:layout_above="@+id/all_ok"
+
+
         >
 
         <Button
@@ -89,6 +81,16 @@
             android:layout_alignParentEnd="true" />
 
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/goomap"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignEnd="@+id/last_place" />
+
 
 
     </RelativeLayout>
@@ -100,7 +102,6 @@
         android:layout_margin="3dp"
         android:background="@drawable/mbdi"
         android:id="@+id/all_ok" />
-
 
 
 </RelativeLayout>

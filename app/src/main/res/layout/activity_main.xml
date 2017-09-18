@@ -17,49 +17,38 @@
         android:backgroundTintMode="src_atop"
         android:id="@+id/linearLayout">
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/schedule"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/sechdule"
-            />
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/liked"
-            android:background="@drawable/like"
+            android:text="R-tree(2)"
+            android:layout_weight="1"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp" />
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/Createtrip_btn"
             android:layout_marginTop="5dp"
-            android:background="@drawable/create"
+            android:text="最佳解(2)"
+            android:layout_weight="1"
             android:layout_marginRight="10dp"
 
-            android:layout_weight="0.08" />
+             />
 
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/goomap"
-            android:id="@+id/map" />
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
-            android:background="@drawable/my"
+            android:text="R-tree(3)"
+            android:layout_weight="1"
             android:id="@+id/account" />
+
+
     </LinearLayout>
 
     <RelativeLayout

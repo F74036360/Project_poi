@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -100,6 +101,7 @@ public class Create_trip extends Fragment {
     int cnt_poi_set=0;
     ArrayList<Date> timeLine=new ArrayList<>();
     ArrayList<LatLng> all_latlng=new ArrayList<>();//from start to end
+    private FloatingActionButton map_direction;
     //for poi reference
     public ArrayList<String> all_poi_name=new ArrayList<>();
     public ArrayList<String> all_poi_rating=new ArrayList<>();
@@ -126,9 +128,9 @@ public class Create_trip extends Fragment {
     private String formatDate;
     private String formatTime;
     private String first_time_set;
-
-    ArrayList<String> myDataset = new ArrayList<>();
-    ArrayList<String> ref_dataset = new ArrayList<>();
+    long time1,time2;
+    //ArrayList<String> myDataset = new ArrayList<>();
+    //ArrayList<String> ref_dataset = new ArrayList<>();
     private final static int PLACE_PICKER_REQUEST = 1;
     private final static int PLACE_PICKER_REQUEST_LAST=2;
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
@@ -150,7 +152,7 @@ public class Create_trip extends Fragment {
         client = new GoogleApiClient.Builder(getContext()).addApi(AppIndex.API).build();
         createfirst = (Button) Mainview.findViewById(R.id.first_trip_button);
         all_OK = (Button) Mainview.findViewById(R.id.all_ok);
-        Matrix=(Button) Mainview.findViewById(R.id.Matrix);
+        //=(Button) Mainview.findViewById(R.id.Matrix);
         lastLocation=(Button)Mainview.findViewById(R.id.last_place);
         add_POI=(Button)Mainview.findViewById(R.id.add_poi);
         poiAdapter = new POIAdapter();
@@ -158,7 +160,8 @@ public class Create_trip extends Fragment {
         final LinearLayoutManager layoutManager1 = new LinearLayoutManager(getContext());
         layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
         mList.setLayoutManager(layoutManager1);
-
+        map_direction=(FloatingActionButton)Mainview.findViewById(R.id.fab);
+        map_direction.setVisibility(View.INVISIBLE);
         createfirst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,7 +206,7 @@ public class Create_trip extends Fragment {
                                 formatDate = setDateFormat(year, month, day);
                                 SimpleDateFormat dateFormat=new SimpleDateFormat("EEEE");
                                 Date date=new Date(year,month,day-1);
-                                //Log.e(""+formatDate,""+dateFormat.format(date));
+                                Log.e(""+formatDate,""+dateFormat.format(date));
                                 FirstWeekday=dateFormat.format(date);
                                 doSetDate.setText(""+year+"-"+(month+1)+"-"+day);
                             }
@@ -230,10 +233,8 @@ public class Create_trip extends Fragment {
                                 SimpleDateFormat time=new SimpleDateFormat("hh:mm aa");
                                 Time tme = new Time(hourOfDay,minute,0);//seconds by default set to zero
                                 first_time_set=time.format(tme);
-                                //Log.e("time",""+time.format(tme));
+                                Log.e("Set time",""+time.format(tme));
                                 doSetTime.setText(""+time.format(tme));
-
-
                             }
                         }, hour, minute, false).show();
                     }
@@ -346,7 +347,8 @@ public class Create_trip extends Fragment {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
-
+                Log.e("START TIME",""+System.currentTimeMillis());
+                time1=System.currentTimeMillis();
                 if(firstplace.getName()==lastplace.getName())
                 {
                     int all_place=POI_choice_list.size()+1;
@@ -372,7 +374,7 @@ public class Create_trip extends Fragment {
                         }
                         for(int i=0;i<timeLine.size();i++)
                         {
-                            //Log.e("timeLine: "+i,""+timeLine.get(i));
+                            Log.e("timeLine: "+i,""+timeLine.get(i));
                         }
 
                     } catch (ParseException e) {
@@ -413,7 +415,7 @@ public class Create_trip extends Fragment {
             googlePlacesUrl.append("&rankby=prominence");
             googlePlacesUrl.append("&keyword=" + nearbyPlace);
             googlePlacesUrl.append("&sensor=true");
-            googlePlacesUrl.append("&key=" + "AIzaSyC5FS4Ar74vSPSCJZ20FPVOcuaQUWl82PE");
+            googlePlacesUrl.append("&key=" + "AIzaSyDSsvE_caKP5pI7y4G8HmEqheCGA0a02_E");
             //Log.d("getUrl", googlePlacesUrl.toString());
             return (googlePlacesUrl.toString());
         }
@@ -562,7 +564,7 @@ public class Create_trip extends Fragment {
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/details/json?");
         googlePlacesUrl.append("placeid=" + Place_id);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyC5FS4Ar74vSPSCJZ20FPVOcuaQUWl82PE");
+        googlePlacesUrl.append("&key=" + "AIzaSyDSsvE_caKP5pI7y4G8HmEqheCGA0a02_E");
       //  Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }
@@ -589,7 +591,7 @@ public class Create_trip extends Fragment {
             br.close();
 
         } catch (Exception e) {
-            Log.d("Exception while downloading url", "" + e.toString());
+            Log.d("Exception", "" + e.toString());
         } finally {
             iStream.close();
             urlConnection.disconnect();
@@ -695,7 +697,7 @@ public class Create_trip extends Fragment {
             for(int i=0;i<list.size();i++)
             {
                 HashMap<String, String> Matrix_info = list.get(i);
-                Log.e("distance text",""+Matrix_info.get("distance_text"));
+                //Log.e("distance text",""+Matrix_info.get("distance_text"));
                 Log.e("duration text",""+Matrix_info.get("duration_text"));
                 Date time_duration;
                 SimpleDateFormat s1=new SimpleDateFormat("ss");
@@ -703,7 +705,7 @@ public class Create_trip extends Fragment {
                 try {
                     time_duration=s1.parse(Matrix_info.get("duration_value"));
                     Date time_Duration = new SimpleDateFormat("HH:mm").parse(s2.format(time_duration));
-                    Date timelineori=timeLine.get(cnt_timeline);
+                    //Date timelineori=timeLine.get(cnt_timeline);
                     for(int j=cnt_timeline;j<timeLine.size();j++)
                     {
                         Date setTime= new SimpleDateFormat("HH:mm").parse(s2.format(timeLine.get(j)));
@@ -730,13 +732,23 @@ public class Create_trip extends Fragment {
                     else
                     {
                         //Log.e("all done","");
-                        //for(int j=0;j<all_poi_name.size();j++)Log.e("name",""+all_poi_name.get(j));
+                        map_direction.setVisibility(View.VISIBLE);
+                        map_direction.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                            }
+                        });
+                        for(int j=0;j<all_poi_name.size();j++)Log.e("name",""+all_poi_name.get(j));
                         myAdapter = new MyAdapter(all_poi_name, all_poi_photo, all_poi_latlng);
                         RecyclerView mList = (RecyclerView) Mainview.findViewById(R.id.list_view);
                         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
                         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                         mList.setLayoutManager(layoutManager);
                         mList.setAdapter(myAdapter);
+                        Log.e("END TIME:",""+System.currentTimeMillis());
+                        time2=System.currentTimeMillis();
+                        Log.e("total time:",""+(time2-time1));
                     }
 
                 } catch (ParseException e) {
@@ -888,7 +900,7 @@ public class Create_trip extends Fragment {
                                     //Log.e("rating",""+hPlaceDetails.get("rating"));
                                     all_poi_name.add(hPlaceDetails.get("name"));
                                     String photo = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photoreference="
-                                            + hPlaceDetails.get("ref_photo") + "&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
+                                            + hPlaceDetails.get("ref_photo") + "&key=" + "AIzaSyDSsvE_caKP5pI7y4G8HmEqheCGA0a02_E";
                                     all_poi_photo.add(photo);
 
                                     double lat = Double.parseDouble(hPlaceDetails.get("lat"));
@@ -923,11 +935,11 @@ public class Create_trip extends Fragment {
             if(allow_distance==true)
             {
                 allow_distance=false;
-                //Log.e("all latlng size",""+all_latlng.size());
+                Log.e("all latlng size",""+all_latlng.size());
                 double temp=all_latlng.size()/2.0;
                 //Log.e("temp",""+temp);
                 double all_latlng_size= Math.ceil(temp);
-               // Log.e("all latlng size(double)",""+all_latlng_size);
+               Log.e("all latlng size(double)",""+all_latlng_size);
                 int all_latlng_size1=(int)all_latlng_size;
               //  Log.e("all latlng size(int)",""+all_latlng_size1);
                 LatLng L1=all_latlng.get(all_latlng_size1-1);
@@ -935,7 +947,7 @@ public class Create_trip extends Fragment {
 
                 String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+L1.latitude+","+L1.longitude +
                         "&destinations="+L2.latitude+","+L2.longitude +
-                        "&key=AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
+                        "&key=AIzaSyDSsvE_caKP5pI7y4G8HmEqheCGA0a02_E";
                 Distance_Matrix task = new Distance_Matrix();
                 task.execute(url);
             }
@@ -1031,8 +1043,6 @@ public class Create_trip extends Fragment {
                 when_to_get_middle+=path.getTime();
                 //Log.e("middle",""+s2.format(when_to_get_middle));
                 holder.endtime.setText("離開時間"+s2.format(when_to_get_middle));
-
-
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -1157,7 +1167,7 @@ public class Create_trip extends Fragment {
                         case 1:
                             try {
                                 time = simpleDateFormat.parse("01:00");
-                                //Log.e("time",""+time);
+                                Log.e("time",""+time);
                                 POI_length_list.set(position,time);
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -1176,7 +1186,7 @@ public class Create_trip extends Fragment {
                         case 3:
                             try {
                                 time = simpleDateFormat.parse("02:00");
-                               // Log.e("time",""+time);
+                                Log.e("time",""+time);
                                 POI_length_list.set(position,time);
                             } catch (ParseException e) {
                                 e.printStackTrace();

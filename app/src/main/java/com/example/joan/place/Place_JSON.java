@@ -54,7 +54,7 @@ public class Place_JSON {
         String rating="-NA-";
         try {
             // Extracting Place name, if available
-            if (!jPlace.isNull("name")) {
+           if (!jPlace.isNull("name")) {
                 placeName = jPlace.getString("name");
             }
             // Extracting Place Vicinity, if available
@@ -63,14 +63,15 @@ public class Place_JSON {
             }
             if(!jPlace.isNull("rating"))
             {
-                rating=jPlace.getString("rating");
-            }
 
+            rating=jPlace.getString("rating");
+             }
             latitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lng");
-            reference = jPlace.getString("reference");
+             reference = jPlace.getString("reference");
             Place_id = jPlace.getString("place_id");
-            place.put("place_name", placeName);
+
+           place.put("place_name", placeName);
             //Log.e("placename",""+placeName);
             place.put("vicinity", vicinity);
             place.put("lat", latitude);

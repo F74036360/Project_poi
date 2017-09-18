@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PLACE.iml" filepath="$PROJECT_DIR$/PLACE.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sqlite-android-3200100/sqlite-android-3200100.iml" filepath="$PROJECT_DIR$/sqlite-android-3200100/sqlite-android-3200100.iml" />
     </modules>
   </component>
 </project>

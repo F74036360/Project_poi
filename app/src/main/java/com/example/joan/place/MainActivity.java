@@ -15,7 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -34,11 +34,11 @@ public class MainActivity extends FragmentActivity {
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private final static int PLACE_PICKER_REQUEST = 1;
     public List<HashMap<String, String>> mainlist = null;
-    ImageButton Createbtn;
-    ImageButton Liked_btn;
-    ImageButton Schedule_btn;
-    ImageButton Account_btn;
-    ImageButton Map_btn;
+    Button Createbtn;
+    Button Liked_btn;
+    //Button Schedule_btn;
+    Button Account_btn;
+    //Button Map_btn;
     Create_trip create_trip;
     Liked like_frag;
     Schedule_Frag schedule_frag;
@@ -59,11 +59,13 @@ public class MainActivity extends FragmentActivity {
         schedule_frag=new Schedule_Frag();
         account_frag=new Account_fragment();
         Context context=getApplicationContext();
-        Createbtn = (ImageButton) findViewById(R.id.Createtrip_btn);
-        Liked_btn = (ImageButton) findViewById(R.id.liked);
-        Schedule_btn=(ImageButton) findViewById(R.id.schedule);
-        Account_btn=(ImageButton) findViewById(R.id.account);
-        Map_btn=(ImageButton) findViewById(R.id.map);
+        Createbtn = (Button) findViewById(R.id.Createtrip_btn);
+        Liked_btn = (Button) findViewById(R.id.liked);
+        //Schedule_btn=(ImageButton) findViewById(R.id.schedule);
+        Account_btn=(Button) findViewById(R.id.account);
+        //Map_btn=(ImageButton) findViewById(R.id.map);
+
+        System.loadLibrary("sqliteX");
 
         Createbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,25 +83,12 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        Schedule_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fm.beginTransaction().replace(R.id.for_change_view, schedule_frag).commit();
 
-            }
-        });
 
         Account_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 fm.beginTransaction().replace(R.id.for_change_view, account_frag).commit();
-
-            }
-        });
-
-        Map_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
             }
         });
