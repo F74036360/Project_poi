@@ -19,7 +19,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
@@ -103,6 +106,8 @@ public class Liked extends Fragment {
     private ImageButton poiitem_mall;
     public  int middle=0;
     static int cnt_timeline=0;
+    public static FloatingActionButton map_direction;
+
     static ArrayList<Date> timeLine=new ArrayList<>();
     static ArrayList<LatLng> all_latlng=new ArrayList<>();//from start to end
     //for poi reference
@@ -161,7 +166,7 @@ public class Liked extends Fragment {
     public static final String POI_lng="lng";
     public static final String POI_address="address";//photo
     public static final String POI_ID="_ID";
-
+    public static FragmentManager fragmentManager;
     public static ArrayList<Integer> anslist=new ArrayList<>();
 
 
@@ -177,6 +182,7 @@ public class Liked extends Fragment {
         Mainview = inflater.inflate(R.layout.fragment_liked, container, false);
 
         ctx=getContext();
+        fragmentManager= getFragmentManager();
 
         client = new GoogleApiClient.Builder(getContext()).addApi(AppIndex.API).build();
         createfirst = (Button) Mainview.findViewById(R.id.first_trip_button);
@@ -189,7 +195,8 @@ public class Liked extends Fragment {
         final LinearLayoutManager layoutManager1 = new LinearLayoutManager(getContext());
         layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
         mList.setLayoutManager(layoutManager1);
-
+        map_direction=(FloatingActionButton) Mainview.findViewById(R.id.fab);
+        map_direction.setVisibility(View.INVISIBLE);
         createfirst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -270,7 +277,6 @@ public class Liked extends Fragment {
 
             }
         });
-
 
         add_POI.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.N)
@@ -376,6 +382,7 @@ public class Liked extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.e("START TIME",""+System.currentTimeMillis());
+
                 time1=System.currentTimeMillis();
                 R_db=SQLiteDatabase.openOrCreateDatabase(":memory:",null);
                 b_db=SQLiteDatabase.openOrCreateDatabase(":memory:",null);
@@ -723,6 +730,7 @@ public class Liked extends Fragment {
     public static class ParseMatrix extends AsyncTask<String, Integer, List<HashMap<String, String>>> {
         JSONObject jObject;
         int count;
+
         public ParseMatrix(int count)
         {
             this.count=count;
@@ -772,6 +780,16 @@ public class Liked extends Fragment {
             }
             if(count==all_poi_latlng.size()-1)
             {
+                map_direction.setVisibility(View.VISIBLE);
+                map_direction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        map fragment2 = new map(firstplace,all_poi_latlng,all_poi_name);
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().replace(R.id.for_change_view, fragment2);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                });
                 Liked.MyAdapter myAdapter=new Liked.MyAdapter(Liked.all_poi_name,Liked.all_poi_photo,Liked.all_poi_latlng);
                 RecyclerView mList = (RecyclerView) Liked.Mainview.findViewById(R.id.list_view);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(ctx);
@@ -781,6 +799,7 @@ public class Liked extends Fragment {
                 Log.e("END TIME",""+System.currentTimeMillis());
                 long time2=System.currentTimeMillis();
                 Log.e("total time:",""+(time2-time1));
+
             }
 
         }
@@ -1269,7 +1288,7 @@ public class Liked extends Fragment {
 
 
 
-    public static class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+    public static class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         private List<String> mData;
         private List<String> photodata;
         private List<LatLng> latLngs;

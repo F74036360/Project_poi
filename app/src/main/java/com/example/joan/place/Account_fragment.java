@@ -290,7 +290,6 @@ public class Account_fragment extends Fragment {
             }
         });
 
-
         lastLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -2,16 +2,17 @@
     <string name="app_name">PLACE</string>
     <string name="title_activity_maps">Map</string>
     <string-array name="restrict_length">
-            <item>30 min</item>
-            <item>1 hr</item>
-            <item>1.5 hr</item>
-            <item>2 hr</item>
-            <item>3 hr</item>
-            <item>4 hr</item>
-            <item>5 hr</item>
-            <item>6 hr</item>
-            <item>12 hr</item>
+        <item>30 min</item>
+        <item>1 hr</item>
+        <item>1.5 hr</item>
+        <item>2 hr</item>
+        <item>3 hr</item>
+        <item>4 hr</item>
+        <item>5 hr</item>
+        <item>6 hr</item>
+        <item>12 hr</item>
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_mapforcard">Mapforpoi</string>
 </resources>
