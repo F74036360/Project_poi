@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
+import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -22,7 +23,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
@@ -72,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -81,7 +82,7 @@ public class Liked extends Fragment {
     static long time1;
     long time2;
     public Button createfirst;
-    public Button lastLocation;
+    public Button saveresult;
     public Button Matrix;
     private int mYear;
     private int mMonth;
@@ -90,6 +91,7 @@ public class Liked extends Fragment {
     private Button doSetDate;
     private Button doSetTime;
     private Button pickplace;
+    public static int firstfound=0;
     //private EditText setTimeDuration;
     private Button all_OK;
     private Button add_POI;
@@ -150,7 +152,7 @@ public class Liked extends Fragment {
     MyAdapter myAdapter;
     POIAdapter poiAdapter;
     ArrayList<String> POI_choice_list=new ArrayList<>();
-    static ArrayList<Date> POI_length_list=new ArrayList<>();
+    static ArrayList<String> POI_length_list=new ArrayList<>();
     public static ArrayList<Integer> Count_Google_IDs=new ArrayList();
     public static ArrayList<Integer> GoogleIDlist=new ArrayList<>();
 
@@ -175,6 +177,7 @@ public class Liked extends Fragment {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -183,20 +186,18 @@ public class Liked extends Fragment {
 
         ctx=getContext();
         fragmentManager= getFragmentManager();
-
+        timeLine.clear();
         client = new GoogleApiClient.Builder(getContext()).addApi(AppIndex.API).build();
         createfirst = (Button) Mainview.findViewById(R.id.first_trip_button);
         all_OK = (Button) Mainview.findViewById(R.id.all_ok);
        // Matrix=(Button) Mainview.findViewById(R.id.Matrix);
-        lastLocation=(Button)Mainview.findViewById(R.id.last_place);
-        add_POI=(Button)Mainview.findViewById(R.id.add_poi);
+        saveresult=(Button)Mainview.findViewById(R.id.save_result);
+        //add_POI=(Button)Mainview.findViewById(R.id.add_poi);
         poiAdapter = new POIAdapter();
         final RecyclerView mList = (RecyclerView) Mainview.findViewById(R.id.list_view);
         final LinearLayoutManager layoutManager1 = new LinearLayoutManager(getContext());
         layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
         mList.setLayoutManager(layoutManager1);
-        map_direction=(FloatingActionButton) Mainview.findViewById(R.id.fab);
-        map_direction.setVisibility(View.INVISIBLE);
         createfirst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -239,7 +240,7 @@ public class Liked extends Fragment {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int day) {
                                 formatDate = setDateFormat(year, month, day);
-                                SimpleDateFormat dateFormat=new SimpleDateFormat("EEEE");
+                                SimpleDateFormat dateFormat=new SimpleDateFormat("EEEE", Locale.ENGLISH);
                                 Date date=new Date(year,month,day-1);
                                 Log.e(""+formatDate,""+dateFormat.format(date));
                                 FirstWeekday=dateFormat.format(date);
@@ -261,15 +262,21 @@ public class Liked extends Fragment {
                         int hour = c.get(Calendar.HOUR_OF_DAY);
                         int minute = c.get(Calendar.MINUTE);
                         // Create a new instance of TimePickerDialog and return it
-                        new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                        new TimePickerDialog(ctx, new TimePickerDialog.OnTimeSetListener(){
 
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                SimpleDateFormat time=new SimpleDateFormat("hh:mm aa");
-                                Time tme = new Time(hourOfDay,minute,0);//seconds by default set to zero
-                                first_time_set=time.format(tme);
-                                Log.e("Set time",""+time.format(tme));
-                                doSetTime.setText(""+time.format(tme));
+                                Log.e("hour"+hourOfDay,"minute: "+minute);
+                                SimpleDateFormat time=new SimpleDateFormat("HH:mm",Locale.ENGLISH);
+                                time.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                                SimpleDateFormat time2=new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
+                                time2.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                                Time t = Time.valueOf(hourOfDay+":"+minute+":00");
+                                first_time_set=time.format(t);
+                                doSetTime.setText(""+time2.format(t));
+                                Log.e("hour",""+first_time_set);
+
+
                             }
                         }, hour, minute, false).show();
                     }
@@ -278,25 +285,62 @@ public class Liked extends Fragment {
             }
         });
 
-        add_POI.setOnClickListener(new View.OnClickListener() {
+        saveresult.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(all_poi_name.size()>0)
+                {
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
+                    final EditText edittext = new EditText(ctx);
+                    alert.setTitle("為此資料取名");
+                    alert.setView(edittext);
+                    alert.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            //What ever you want to do with the value
+                            String temptable = edittext.getText().toString();
+
+                            MainActivity.save_result.add_database(temptable,all_poi_name
+                                    ,all_poi_photo,all_poi_latlng,all_poi_rating,
+                                    all_poi_phone,all_poi_website,all_poi_openingtime);
+                        }
+                    });
+                    alert.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // what ever you want to do with No option.
+                        }
+                    });
+                    alert.show();
+
+
+                }
+                else Toast.makeText(ctx,"尚未有結果",Toast.LENGTH_LONG).show();
+            }
+        });
+
+        POI_choice_list.add("poi");
+        POI_choice_list.add("poi");
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
+        POI_length_list.add("00:30:00");
+        POI_length_list.add("00:30:00");
+        Log.e("",""+POI_length_list.size());
+        mList.setAdapter(poiAdapter);
+        /*add_POI.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
                 POI_choice_list.add("poi");
+                POI_choice_list.add("poi");
                 SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
-                try {
-                    Date time = simpleDateFormat.parse("00:30");
-                    //Log.e("poi_time",""+time);
-                    POI_length_list.add(time);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                POI_length_list.add("00:30:00");
+                POI_length_list.add("00:30:00");
+                Log.e("",""+POI_length_list.size());
                 mList.setAdapter(poiAdapter);
             }
-        });
+        });*/
 
 
-        lastLocation.setOnClickListener(new View.OnClickListener() {
+        /*lastLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LayoutInflater inflater1 = getActivity().getLayoutInflater();
@@ -375,8 +419,8 @@ public class Liked extends Fragment {
                     }
                 });
             }
-        });
-
+        });*/
+        Count_Google_IDs.clear();
         all_OK.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
@@ -389,11 +433,12 @@ public class Liked extends Fragment {
                 if(firstplace.getName()==lastplace.getName())
                 {
                     int all_place=POI_choice_list.size()+1;
-                    middle=all_place/2;
+                    //middle=all_place/2;
                     SimpleDateFormat s1=new SimpleDateFormat("ss");
                     SimpleDateFormat s2=new SimpleDateFormat("HH:mm");
                     for(int i=0;i<POI_choice_list.size();i++)
                     {
+                        anslist.clear();
                         cnt_poi_in_database.add(0);
                         Count_Google_IDs.add(0);
                         String temp_Rtree="R_table"+i;
@@ -405,22 +450,60 @@ public class Liked extends Fragment {
                     }
 
                     try {
-                        Date timeS=s2.parse(first_time_set);
-                        when_to_get_middle=timeS.getTime();
+                        SimpleDateFormat time=new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
+                        time.setTimeZone(TimeZone.getTimeZone("GMT+8"));
 
-                        for(int i=0;i<middle-1;i++)
+
+                        SimpleDateFormat parseFormat = new SimpleDateFormat("HH:mm",Locale.ENGLISH);
+                        parseFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                        Date timeS=parseFormat.parse(first_time_set);
+                        Log.e("timeS",""+timeS);
+                        when_to_get_middle=timeS.getTime();
+                        Log.e("times",""+when_to_get_middle);
+                        Log.e("middle First",""+parseFormat.format(when_to_get_middle));
+                        timeLine.add(parseFormat.parse(parseFormat.format(when_to_get_middle)));
+
+                        /*String time1=parseFormat.format(when_to_get_middle).toString();
+                        //Log.e("time1",""+time1);
+                        String time2="01:00:00";
+                        //Log.e("time2",time2);*/
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm",Locale.ENGLISH);
+                        timeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        //Date date1 = timeFormat.parse(time1);
+                        //Date date2 = timeFormat.parse(time2);
+                        /*long sum =date2.getTime()+when_to_get_middle;
+                        Log.e("sum",""+sum);
+                        Log.e("date2",""+date2);
+                        String date3 = timeFormat.format(new Date(sum));
+                        Log.e("date3",""+date3);*/
+                        //Date timeS = new SimpleDateFormat("HH:mm").parse(parseFormat.format(timeLine.get(count)));
+                        //Date timeE = new SimpleDateFormat("HH:mm").parse(parseFormat.format(timeLine.get(count+1)));
+                        for(int i=0;i<POI_length_list.size();i++)
                         {
-                            Date path=s1.parse(String.valueOf(POI_length_list.get(i)));
+
+                            Log.e("path",""+POI_length_list.get(i));
+                            Date path=timeFormat.parse(POI_length_list.get(i));
                             when_to_get_middle+=path.getTime();
+                            Log.e("path",""+when_to_get_middle);
+                            String sum = timeFormat.format(new Date(when_to_get_middle));
+                            Log.e("sum",""+sum);
+                            //long when_to_get_middle1=path.getTime();
+                            //long temp=when_to_get_middle+when_to_get_middle1;
+                            //Log.e("middle",""+parseFormat.format(temp));
+
+                            timeLine.add(parseFormat.parse(parseFormat.format(when_to_get_middle)));
                         }
-                        timeLine.add(new SimpleDateFormat("HH:mm").parse(s2.format(when_to_get_middle)));
-                        for(int i=middle-1;i<POI_length_list.size();i++)
+
+                        /*for(int i=;i<POI_length_list.size();i++)
                         {
                             when_to_get_middle+=POI_length_list.get(i).getTime();
-                            timeLine.add(new SimpleDateFormat("HH:mm").parse(s2.format(when_to_get_middle)));
-                        }
+                            timeLine.add(parseFormat.parse(s2.format(when_to_get_middle)));
+                        }*/
                         for(int i=0;i<timeLine.size();i++)
                         {
+                            //SimpleDateFormat format=new SimpleDateFormat("HH:mm",Locale.ENGLISH);
+                            //format.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+                            //Log.e("format", format.format(timeLine.get(i)));
                             Log.e("timeLine: "+i,""+timeLine.get(i));
                         }
 
@@ -454,7 +537,7 @@ public class Liked extends Fragment {
         googlePlacesUrl.append("&rankby=prominence");
         googlePlacesUrl.append("&keyword=" + nearbyPlace);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyDSsvE_caKP5pI7y4G8HmEqheCGA0a02_E");
+        googlePlacesUrl.append("&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc");
         //Log.d("getUrl_poi", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
 
@@ -482,20 +565,21 @@ public class Liked extends Fragment {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 firstplace = PlacePicker.getPlace(data, getActivity());
+                lastplace=firstplace;
                 all_latlng.add(firstplace.getLatLng());
                 first_place_msg = String.format("%s", firstplace.getName());
                 pickplace.setText(first_place_msg);
                 createfirst.setText(first_place_msg);
-                Toast.makeText(getContext(), first_place_msg, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), first_place_msg, Toast.LENGTH_LONG).show();
             }
         }
         else if(requestCode==PLACE_PICKER_REQUEST_LAST)
         {
             if (resultCode == Activity.RESULT_OK) {
-                lastplace = PlacePicker.getPlace(data, getActivity());
+                /*lastplace = PlacePicker.getPlace(data, getActivity());
                 last_place_msg = String.format("Place: %s", lastplace.getName());
                 pickplace.setText(last_place_msg);
-                Toast.makeText(getContext(), last_place_msg, Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), last_place_msg, Toast.LENGTH_LONG).show();*/
 
             }
         }
@@ -598,7 +682,7 @@ public class Liked extends Fragment {
         contentValues.put(POI_address,photo);
         String temp_Btree="B_table"+count;
         b_db.insertOrThrow(temp_Btree,null,contentValues);
-        Log.e("inserted in B","i hope...");
+        Log.e("inserted in B","id="+id);
     }
 
     public static void Add_info_for_R_DB(int count,int id,double min_lat,double min_lng,double max_lat,double max_lng)
@@ -613,7 +697,7 @@ public class Liked extends Fragment {
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/details/json?");
         googlePlacesUrl.append("placeid=" + Place_id);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyDSsvE_caKP5pI7y4G8HmEqheCGA0a02_E");
+        googlePlacesUrl.append("&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc");
         //  Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }
@@ -752,26 +836,41 @@ public class Liked extends Fragment {
         @TargetApi(Build.VERSION_CODES.N)
         @Override
         protected void onPostExecute(List<HashMap<String, String>> list) {
-            for(int i=0;i<list.size();i++)
+            for(int i=0;i<1;i++)
             {
                 HashMap<String, String> Matrix_info = list.get(i);
                 //Log.e("distance text",""+Matrix_info.get("distance_text"));
                 //Log.e("duration text",""+Matrix_info.get("duration_text"));
                 Date time_duration;
                 SimpleDateFormat s1=new SimpleDateFormat("ss");
+                s1.setTimeZone(TimeZone.getTimeZone("GMT+8"));
                 SimpleDateFormat s2=new SimpleDateFormat("HH:mm");
+                s2.setTimeZone(TimeZone.getTimeZone("GMT+8"));
                 try {
+
+                    SimpleDateFormat parseFormat = new SimpleDateFormat("HH:mm",Locale.ENGLISH);
+                    parseFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                    /*Date timeS=parseFormat.parse(first_time_set);
+                    Log.e("timeS",""+timeS);
+                    when_to_get_middle=timeS.getTime();
+                    Log.e("times",""+when_to_get_middle);
+                    Log.e("middle First",""+parseFormat.format(when_to_get_middle));
+                    timeLine.add(parseFormat.parse(parseFormat.format(when_to_get_middle)));*/
+
+
                     time_duration=s1.parse(Matrix_info.get("duration_value"));
-                    Date time_Duration = new SimpleDateFormat("HH:mm").parse(s2.format(time_duration));
+                    Date time_Duration = new SimpleDateFormat("HH:mm").parse(parseFormat.format(time_duration));
                     //Date timelineori=timeLine.get(cnt_timeline);
                     for(int j=count;j<timeLine.size();j++)
                     {
-                        Date setTime= new SimpleDateFormat("HH:mm").parse(s2.format(timeLine.get(j)));
+
+                        Date setTime= s2.parse(s2.format(timeLine.get(j)));
                         long timeline_s=setTime.getTime()+time_Duration.getTime();
-                        Date change_timeline = new SimpleDateFormat("HH:mm").parse(s2.format(timeline_s));
+                        Date change_timeline =s2.parse(s2.format(timeline_s));
                         timeLine.set(j,change_timeline);
-                        //Log.e("changed",""+timeLine.get(j));
+
                     }
+
                     // timeLine.add(cnt_timeline,timelineori);
 
                 } catch (ParseException e) {
@@ -780,7 +879,7 @@ public class Liked extends Fragment {
             }
             if(count==all_poi_latlng.size()-1)
             {
-                map_direction.setVisibility(View.VISIBLE);
+                /*map_direction.setVisibility(View.VISIBLE);
                 map_direction.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -789,13 +888,16 @@ public class Liked extends Fragment {
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                     }
-                });
+                });*/
+                R_db.close();
+                b_db.close();
                 Liked.MyAdapter myAdapter=new Liked.MyAdapter(Liked.all_poi_name,Liked.all_poi_photo,Liked.all_poi_latlng);
                 RecyclerView mList = (RecyclerView) Liked.Mainview.findViewById(R.id.list_view);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(ctx);
                 layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                 mList.setLayoutManager(layoutManager);
                 mList.setAdapter(myAdapter);
+                Log.e("name",""+all_poi_name);
                 Log.e("END TIME",""+System.currentTimeMillis());
                 long time2=System.currentTimeMillis();
                 Log.e("total time:",""+(time2-time1));
@@ -863,7 +965,7 @@ public class Liked extends Fragment {
                 if(hmPlace.get("place_id")!=null)
                 {
                     String place_id=hmPlace.get("place_id");
-                  //  Log.e("count="+count,"id="+place_id);
+                    //Log.e("count="+count,"id="+place_id);
                     Google_IDs.add(place_id);
 
                 }
@@ -884,11 +986,11 @@ public class Liked extends Fragment {
 
     public static int findbestsol(int count,double latitude,double longitude)
     {
-       // Log.e("into findbestsol"," count="+count);
+        Log.e("into findbestsol"," count="+count);
         String rtable="R_table"+count;
         String btable="B_table"+count;
 
-        double length=1;
+        double length=3;
         double lat_diff=length/110.574;  //利用距離的比例來算出緯度上的比例
         double lon_distance=111.320*Math.cos(latitude*Math.PI/180); //算出該緯度上的經度長度
         double lon_diff=length/lon_distance; //利用距離的比例來算出經度上的比例
@@ -932,7 +1034,6 @@ public class Liked extends Fragment {
                 if(c!=null)
                 {
                     c.moveToFirst();
-                   // Log.e("-----form mid-----","id="+c.getInt(0));
                     //Log.e("name"," "+c.getString(1));
                     firstmemberlists.add(new Firstmemberlist(c.getString(1),c.getDouble(3),c.getDouble(4),c.getInt(0)));
                     /*if(Double.parseDouble(c.getString(6))>rating)
@@ -950,8 +1051,9 @@ public class Liked extends Fragment {
                 int id=temp.getid();
                // double lat=temp.getLat();
                // double lng=temp.getLng();
-                //Log.e("in findfirst","id="+id);
+
             }
+            firstfound=1;
             return 1;
         }
         else
@@ -973,7 +1075,7 @@ public class Liked extends Fragment {
                     +" WHERE minX>="
                     +longitude+" AND maxX<="
                     +E_1000+" AND minY>="+S_1000+" AND maxY<="+latitude;*/
-            Log.e("no sol","sad...");
+            Log.e("first no sol","sad...");
 
             return 0;
         }
@@ -1052,7 +1154,7 @@ public class Liked extends Fragment {
                 if(c!=null)
                 {
                     c.moveToFirst();
-                  //  Log.e("ans name"," "+c.getString(1));
+                    Log.e("ans name"," "+c.getString(1));
                     all_poi_name.add(c.getString(1));
                     all_poi_photo.add(c.getString(7));
                     double lat = c.getDouble(3);
@@ -1067,6 +1169,8 @@ public class Liked extends Fragment {
 
                 }
             }
+            Log.e("latlngsize ",""+all_latlng.size());
+
             for(int i=0;i<all_latlng.size()-1;i++)
             {
 
@@ -1075,11 +1179,12 @@ public class Liked extends Fragment {
               //  Log.e("start:"+L1," to: "+L2);
                 String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+L1.latitude+","+L1.longitude +
                         "&destinations="+L2.latitude+","+L2.longitude +
-                        "&key=AIzaSyDSsvE_caKP5pI7y4G8HmEqheCGA0a02_E";
+                        "&key=AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
                 //Log.e("distance matrix","i="+i);
                 Distance_Matrix task = new Distance_Matrix(i);
                 task.execute(url);
             }
+
             return 1;
         }
         else
@@ -1172,7 +1277,7 @@ public class Liked extends Fragment {
                 jObject = new JSONObject(jsonData[0]);
                 hPlaceDetails = placeDetailsJsonParser.parse(jObject);
                 Double rating=0.0;
-              //  Log.e("count="+count,""+hPlaceDetails.get("name"));
+                Log.e("count="+count,""+hPlaceDetails.get("name"));
                 if(hPlaceDetails.get("rating").compareTo("-NA-")!=0)
                 {
                     rating=Double.parseDouble(hPlaceDetails.get("rating"));
@@ -1180,7 +1285,7 @@ public class Liked extends Fragment {
                 }
                 if(hPlaceDetails.get(FirstWeekday).compareTo("null")!=0&&rating>=3.0)
                 {
-                 //   Log.e("count="+count,""+hPlaceDetails.get(FirstWeekday));
+                    Log.e("count="+count,""+hPlaceDetails.get(FirstWeekday));
                     String opening_hour=hPlaceDetails.get(FirstWeekday);
                     String[] separated = opening_hour.split(": ");
                     if(separated[1].compareTo("Closed")!=0)
@@ -1197,35 +1302,50 @@ public class Liked extends Fragment {
                                     else timelength[0]+="PM";
                                 }
 
-                                SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm");
-                                SimpleDateFormat parseFormat = new SimpleDateFormat("hh:mm a");
-                                Date open_start = parseFormat.parse(timelength[0]);
-                                Date end_time=parseFormat.parse(timelength[1]);
-                                //Date setTimeS=parseFormat.parse(String.valueOf(timeLine.get(cnt_timeline)));
-                                //Date setTimeE=parseFormat.parse(String.valueOf(timeLine.get(cnt_timeline+1)));
-                                Date time1 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(open_start));
-                                Date time2 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(end_time));
-                                Date timeS = new SimpleDateFormat("HH:mm").parse(displayFormat.format(timeLine.get(count)));
-                                Date timeE = new SimpleDateFormat("HH:mm").parse(displayFormat.format(timeLine.get(count+1)));
+                                SimpleDateFormat displayFormat = new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
+                                SimpleDateFormat parseFormat = new SimpleDateFormat("HH:mm",Locale.ENGLISH);
+                                parseFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                                displayFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                                Date time1 = parseFormat.parse(timelength[0]);
+                                Date time2 = displayFormat.parse(timelength[1]);
+                                String time2e=parseFormat.format(time2);
+                                /*Log.e("time1",""+timelength[0]);
+                                Log.e("time2",""+timelength[1]);
+                                Log.e("Starttime",""+time1);
+                                Log.e("time2",""+time2);
+                                Log.e("time2e",""+time2e);*/
+                               // Date timeS=parseFormat.parse(timeLine.get(count).toString());
+                                //Date timeE=parseFormat.parse(timeLine.get(count+1).toString());
+                               // Log.e("timeS",""+timeS);
+                                //Log.e("timeE",""+timeLine.get(count+1).toString());
+                                //Date time1 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(open_start));
+                                //Date time2 = new SimpleDateFormat("HH:mm").parse(displayFormat.format(end_time));
+
+                                Date timeS = timeLine.get(count);
+                                Date timeE = timeLine.get(count+1);
+                                /*Log.e("Starttime",""+time1);
+                                Log.e("Endtime",""+time2);
+                                Log.e("timeS",""+timeS);
+                                Log.e("timeE",""+timeE);*/
                                 if (timeS.after(time1) && timeS.before(time2) && timeE.before(time2)) {
                                     //Log.e("name",""+hPlaceDetails.get("name"));
-                                    //Log.e("rating",""+hPlaceDetails.get("rating"));
+                                    ///Log.e("rating",""+hPlaceDetails.get("rating"));
                                     //all_poi_name.add(hPlaceDetails.get("name"));
 
                                     //all_poi_photo.add(photo);
-                                    /*temp.add(hPlaceDetails.get("name"));
+                                    temp.add(hPlaceDetails.get("name"));
                                     double lat = Double.parseDouble(hPlaceDetails.get("lat"));
-                                    double lng = Double.parseDouble(hPlaceDetails.get("lng"));*/
-                                    /*all_poi_latlng.add(new LatLng(lat,lng));
+                                    double lng = Double.parseDouble(hPlaceDetails.get("lng"));
+                                    all_poi_latlng.add(new LatLng(lat,lng));
                                     all_latlng.add(new LatLng(lat,lng));
                                     all_poi_rating.add(hPlaceDetails.get("rating"));
                                     all_poi_address.add(hPlaceDetails.get("address"));
                                     all_poi_phone.add(hPlaceDetails.get("formatted_phone"));
                                     all_poi_website.add(hPlaceDetails.get("website"));
-                                    all_poi_openingtime.add(hPlaceDetails.get(FirstWeekday));*/
+                                    all_poi_openingtime.add(hPlaceDetails.get(FirstWeekday));
                                     String photo = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photoreference="
                                             + hPlaceDetails.get("ref_photo") + "&key="
-                                            + "AIzaSyDSsvE_caKP5pI7y4G8HmEqheCGA0a02_E";
+                                            + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
                                     b_name=hPlaceDetails.get("name");
                                     b_rating=hPlaceDetails.get("rating");
                                     b_lat=hPlaceDetails.get("lat");
@@ -1258,6 +1378,7 @@ public class Liked extends Fragment {
             if(id!="-NA-"&&b_name!="-NA-")
             {
                 int temp_cnt_database=cnt_poi_in_database.get(count)+1;
+                Log.e("temp_cnt_database size",""+temp_cnt_database);
                 cnt_poi_in_database.set(count,temp_cnt_database);
                 B_tree_background b_tree_background=new B_tree_background(ctx);
                 String count_S= Integer.toString(count);
@@ -1268,7 +1389,7 @@ public class Liked extends Fragment {
             {
                 int temp=Count_Google_IDs.get(count);
                 int insert=temp+1;
-              //  Log.e("null temp=",""+temp);
+                 Log.e("null temp=",""+temp);
                 Count_Google_IDs.set(count,insert);
             }
             /*if(Count_Google_IDs.get(count)==GoogleIDlist.get(count))
@@ -1303,6 +1424,7 @@ public class Liked extends Fragment {
             public TextView phoneview;
             public TextView rankview;
             public TextView openingview;
+            public Button mapbtn;
             public TextView starttime;
             public TextView endtime;
             public ViewHolder(View v) {
@@ -1315,6 +1437,7 @@ public class Liked extends Fragment {
                 rankview=(TextView)v.findViewById(R.id.rank);
                 openingview=(TextView)v.findViewById(R.id.opening_time);
                 starttime=(TextView)v.findViewById(R.id.starttime);
+                mapbtn=(Button)v.findViewById(R.id.mapbtn);
                 endtime=(TextView)v.findViewById(R.id.endtime);
             }
 
@@ -1326,9 +1449,6 @@ public class Liked extends Fragment {
                 MgoogleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
             }
         }
-
-
-
 
 
         public MyAdapter(List<String> data, List<String> photo_data, List<LatLng> latLngs1) {
@@ -1349,18 +1469,33 @@ public class Liked extends Fragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, final int position) {
             holder.mTextView.setText(mData.get(position));
-            Picasso.with(ctx).load(photodata.get(position)).resize(2000,1600)
+            Picasso.with(ctx).load(photodata.get(position)).fit()
                     .into(holder.IMG);
             holder.rankview.setText("評分: "+all_poi_rating.get(position));
             holder.openingview.setText(all_poi_openingtime.get(position));
             holder.phoneview.setText(all_poi_phone.get(position));
             holder.webview.setAutoLinkMask(Linkify.ALL);
             holder.webview.setText(all_poi_website.get(position));
-
+            holder.mapbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Double lat=all_poi_latlng.get(position).latitude;
+                    Double lng=all_poi_latlng.get(position).longitude;
+                    String name=all_poi_name.get(position);
+                    String uri="geo:"+lat+","+lng+"?q="+lat+","+lng+"(Google+"+name+")";
+                    //Log.e("uri",uri);
+                    Uri gmmIntentUri = Uri.parse(uri);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    ctx.startActivity(mapIntent);
+                }
+            });
             SimpleDateFormat s2=new SimpleDateFormat("HH:mm");
+            s2.setTimeZone(TimeZone.getTimeZone("GMT+8"));
             // SimpleDateFormat s1=new SimpleDateFormat("ss");
             holder.starttime.setText("抵達時間"+s2.format(timeLine.get(position)));
-            try {
+            holder.endtime.setText("離開時間"+s2.format(timeLine.get(position+1)));
+            /*try {
                 Date timeS=s2.parse(s2.format(timeLine.get(position)));
                 when_to_get_middle=timeS.getTime();
                 Date path=s2.parse(s2.format(POI_length_list.get(position)));
@@ -1369,11 +1504,11 @@ public class Liked extends Fragment {
                 holder.endtime.setText("離開時間"+s2.format(when_to_get_middle));
             } catch (ParseException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             // holder.starttime.setText(new SimpleDateFormat("HH:mm").format(timeLine.get(position)));
             // holder.endtime.setText(new SimpleDateFormat("HH:mm").format(timeLine.get(position+1)));
-            holder.mapView.onCreate(null);
+            /*holder.mapView.onCreate(null);
             holder.mapView.setClickable(false);
             holder.mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -1384,7 +1519,30 @@ public class Liked extends Fragment {
 
                 }
 
+            });*/
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    new AlertDialog.Builder(ctx).setTitle("更換地點?").setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                           /* POI_change poi_change=new POI_change(position);
+                            RecyclerView mList = (RecyclerView) Liked.Mainview.findViewById(R.id.list_view);
+                            LinearLayoutManager layoutManager = new LinearLayoutManager(ctx);
+                            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                            mList.setLayoutManager(layoutManager);
+                            mList.setAdapter(poi_change);*/
+                        }
+                    }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    }).show();
+                    return true;
+                }
             });
+
 
 
         }
@@ -1395,6 +1553,133 @@ public class Liked extends Fragment {
         }
 
     }
+
+
+
+
+
+    public static class POI_change extends RecyclerView.Adapter<POI_change.ViewHolder>{
+        public ArrayList<String> allpoi_name=new ArrayList<>();
+        public ArrayList<String> allpoi_rating=new ArrayList<>();
+        public ArrayList<LatLng> allpoi_latlng=new ArrayList<>();
+        public ArrayList<String> allpoi_photo=new ArrayList<>();
+        public ArrayList<String> allpoi_address=new ArrayList<>();
+        public ArrayList<String> allpoi_phone=new ArrayList<>();
+        public ArrayList<String> allpoi_website=new ArrayList<>();
+        public ArrayList<String> allpoi_openingtime=new ArrayList<>();
+        public int tablecount;
+        public class ViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
+            public TextView mTextView;
+            public ImageView IMG;
+            public MapView mapView;
+            public GoogleMap MgoogleMap;
+            public TextView webview;
+            public TextView phoneview;
+            public TextView rankview;
+            public TextView openingview;
+
+
+            public ViewHolder(View v) {
+                super(v);
+                mTextView = (TextView) v.findViewById(R.id.info_text);
+                IMG = (ImageView) v.findViewById(R.id.img);
+                mapView = (MapView) v.findViewById(R.id.map_card);
+                webview=(TextView)v.findViewById(R.id.website);
+                phoneview=(TextView)v.findViewById(R.id.phone);
+                rankview=(TextView)v.findViewById(R.id.rank);
+                openingview=(TextView)v.findViewById(R.id.opening_time);
+            }
+
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                MgoogleMap = googleMap;
+                LatLng sydney = new LatLng(-34, 151);
+                MgoogleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+                MgoogleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            }
+        }
+
+
+        public POI_change(int tablename) {
+            String btable="B_table"+tablename;
+            tablecount=tablename;
+            Cursor c=b_db.rawQuery("SELECT * FROM " +btable , null);
+            if (c != null) {
+                while (c.isAfterLast() == false)
+                {
+                    allpoi_name.add(c.getString(1));
+                    allpoi_photo.add(c.getString(7));
+                    double lat = c.getDouble(3);
+                    double lng = c.getDouble(4);
+                    allpoi_latlng.add(new LatLng(lat,lng));
+                    allpoi_rating.add(c.getString(6));
+                    allpoi_address.add(c.getString(7));
+                    allpoi_phone.add(c.getString(2));
+                    allpoi_website.add(c.getString(8));
+                    allpoi_openingtime.add(c.getString(5));
+
+                    c.moveToNext();
+                }
+            }
+        }
+
+        @Override
+        public POI_change.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.forcard, parent, false);
+            ViewHolder vh = new ViewHolder(v);
+            return vh;
+        }
+
+        @TargetApi(Build.VERSION_CODES.N)
+        @Override
+        public void onBindViewHolder(ViewHolder holder, final int position) {
+            holder.mTextView.setText(allpoi_name.get(position));
+            Picasso.with(ctx).load(allpoi_photo.get(position)).resize(2000,1600)
+                    .into(holder.IMG);
+            holder.rankview.setText("評分: "+allpoi_rating.get(position));
+            holder.openingview.setText(allpoi_openingtime.get(position));
+            holder.phoneview.setText(allpoi_phone.get(position));
+            holder.webview.setAutoLinkMask(Linkify.ALL);
+            holder.webview.setText(allpoi_website.get(position));
+
+            SimpleDateFormat s2=new SimpleDateFormat("HH:mm");
+            // SimpleDateFormat s1=new SimpleDateFormat("ss");
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.e("name",""+allpoi_name.get(position));
+                    all_poi_name.set(tablecount,allpoi_name.get(position));
+                    all_poi_photo.set(tablecount,allpoi_photo.get(position));
+                    all_poi_latlng.set(tablecount,allpoi_latlng.get(position));
+                    all_latlng.set(tablecount+1,allpoi_latlng.get(position));
+                    all_poi_rating.set(tablecount,allpoi_rating.get(position));
+                    all_poi_address.set(tablecount,allpoi_address.get(position));
+                    all_poi_phone.set(tablecount,allpoi_phone.get(position));
+                    all_poi_website.set(tablecount,allpoi_website.get(position));
+                    all_poi_openingtime.set(tablecount,allpoi_openingtime.get(position));
+
+
+
+                    Liked.MyAdapter myAdapter=new Liked.MyAdapter(Liked.all_poi_name,Liked.all_poi_photo,Liked.all_poi_latlng);
+                    RecyclerView mList = (RecyclerView) Liked.Mainview.findViewById(R.id.list_view);
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(ctx);
+                    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                    mList.setLayoutManager(layoutManager);
+                    mList.setAdapter(myAdapter);
+
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+
+
+    }
+
 
     public class POIAdapter extends RecyclerView.Adapter<POIAdapter.ViewHolder> {
 
@@ -1440,7 +1725,7 @@ public class Liked extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             choice_of_poi = POIchoice.getText().toString();
-                            Toast.makeText(getContext(), "" + choice_of_poi, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getContext(), "" + choice_of_poi, Toast.LENGTH_LONG).show();
                             holder.poi_choice.setText(choice_of_poi);
                             //Log.e("position",""+position);
                             POI_choice_list.set(position,choice_of_poi);
@@ -1475,83 +1760,35 @@ public class Liked extends Fragment {
             holder.length.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
+                   // SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
+                    SimpleDateFormat simpleDateFormat=new SimpleDateFormat("hh:mm",Locale.ENGLISH);
+                    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
                     Date time;
                     switch (i)
                     {
                         case 0:
-                            try {
-                                time = simpleDateFormat.parse("00:30");
-                                //Log.e("time",""+time);
-                                POI_length_list.set(position,time);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            POI_length_list.set(position,"00:30:00");
                             break;
                         case 1:
-                            try {
-                                time = simpleDateFormat.parse("01:00");
-                                Log.e("time",""+time);
-                                POI_length_list.set(position,time);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-
+                            POI_length_list.set(position,"01:00:00");
                             break;
                         case 2:
-                            try {
-                                time = simpleDateFormat.parse("01:30");
-                                //Log.e("time",""+time);
-                                POI_length_list.set(position,time);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            POI_length_list.set(position,"01:30:00");
                             break;
                         case 3:
-                            try {
-                                time = simpleDateFormat.parse("02:00");
-                                Log.e("time",""+time);
-                                POI_length_list.set(position,time);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            POI_length_list.set(position,"02:00:00");
                             break;
                         case 4:
-                            try {
-                                time = simpleDateFormat.parse("03:00");
-                                //Log.e("time",""+time);
-                                POI_length_list.set(position,time);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            POI_length_list.set(position,"03:00:00");
                             break;
                         case 5:
-                            try {
-                                time = simpleDateFormat.parse("06:00");
-                                //Log.e("time",""+time);
-                                POI_length_list.set(position,time);
-
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            POI_length_list.set(position,"06:00:00");
                             break;
                         case 6:
-                            try {
-                                time = simpleDateFormat.parse("08:00");
-                                //Log.e("time",""+time);
-                                POI_length_list.set(position,time);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            POI_length_list.set(position,"08:00:00");
                             break;
                         case 7:
-                            try {
-                                time = simpleDateFormat.parse("12:00");
-                                //Log.e("time",""+time);
-                                POI_length_list.set(position,time);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            POI_length_list.set(position,"12:00:00");
                             break;
                     }
 
@@ -1562,13 +1799,7 @@ public class Liked extends Fragment {
                 @Override
                 public void onNothingSelected(AdapterView<?> adapterView) {
                     SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
-                    try {
-                        Date time = simpleDateFormat.parse("00:30");
-                        // Log.e("time",""+time);
-                        POI_length_list.set(position,time);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    POI_length_list.set(position,"00:30:00");
                 }
             });
 

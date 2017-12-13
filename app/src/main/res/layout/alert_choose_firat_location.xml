@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:layout_margin="10dp"
     android:background="#ffffff">
 
 
@@ -11,7 +12,7 @@
      android:layout_height="wrap_content"
      android:id="@+id/location_re"
      android:layout_margin="6dp"
-     android:background="#c4daf7ca">
+    >
      <TextView
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
@@ -23,7 +24,7 @@
          android:layout_marginRight="4dp"
          android:textAlignment="center"
          android:id="@+id/textView"
-         android:background="#ffffff" />
+         android:backgroundTint="#ffffff" />
      <Button
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
@@ -35,8 +36,8 @@
          android:layout_marginTop="4dp"
          android:layout_below="@+id/textView"
          android:layout_alignParentStart="true"
-         android:background="#dee3cc66"
-         android:id="@+id/pickplace" />
+         android:id="@+id/pickplace"
+         android:backgroundTint="#dee3cc66" />
 
  </RelativeLayout>
 
@@ -47,30 +48,29 @@
         android:layout_below="@+id/location_re"
         android:id="@+id/departday_re"
         android:layout_margin="6dp"
-        android:background="#bbeff99b">
+        >
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Depart Day"
+            android:text="Depart Date"
             android:textSize="30sp"
             android:layout_gravity="top"
             android:layout_marginTop="4dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:textAlignment="center"
-            android:id="@+id/departday"
-            android:background="#ffffff" />
+            android:id="@+id/departday" />
         <Button
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/departday"
             android:layout_marginTop="4dp"
             android:layout_marginLeft="4dp"
-            android:background="#dee3cc66"
             android:textSize="20sp"
             android:layout_marginRight="4dp"
             android:id="@+id/datepicker_first"
-            android:text="Choose a day!">
+            android:text="Date"
+            android:backgroundTint="#dee3cc66">
         </Button>
 
 
@@ -85,7 +85,7 @@
     android:layout_below="@+id/departday_re"
     android:id="@+id/depart_time"
     android:layout_margin="6dp"
-    android:background="#bbeff99b">
+    >
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -96,19 +96,18 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:textAlignment="center"
-            android:id="@+id/departtime"
-            android:background="#ffffff" />
+            android:id="@+id/departtime" />
         <Button
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/departtime"
             android:layout_marginTop="4dp"
-            android:background="#dee3cc66"
             android:textSize="20sp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:id="@+id/timepicker_first"
-            android:text="Time">
+            android:text="Time"
+            android:backgroundTint="#dee3cc66">
         </Button>
 
 

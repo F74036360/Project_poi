@@ -3,50 +3,168 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="com.example.joan.place.MainActivity">
-    android:id="@+id/idid"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.joan.place.MainActivity"
+    android:id="@+id/idid">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:background="@drawable/abc_ab_share_pack_mtrl_alpha"
-        android:backgroundTintMode="src_atop"
-        android:id="@+id/linearLayout">
 
-
-        <Button
+        android:id="@+id/linearLayout"
+        android:background="#ffffff">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/liked"
-            android:text="R-tree(2)"
+            android:orientation="vertical"
             android:layout_weight="1"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp" />
+            >
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:text="台灣"
+                android:textAlignment="center"
+                android:layout_marginRight="10dp"
+                />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/schedule"
+                android:src="@drawable/taiwan"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="10dp"
 
-        <Button
+                android:layout_marginTop="5dp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/Createtrip_btn"
-            android:layout_marginTop="5dp"
-            android:text="最佳解(2)"
+            android:orientation="vertical"
             android:layout_weight="1"
-            android:layout_marginRight="10dp"
+            >
 
-             />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:text="單點"
+                android:textAlignment="center"
+                android:layout_marginRight="10dp"
+                />
 
-        <Button
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/like"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/search_"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:text="R-tree(3)"
+            android:orientation="vertical"
+            android:layout_weight="0.9"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:text="兩POI搜索"
+                android:textAlignment="center"
+                android:layout_marginRight="10dp"
+                />
+
+            <ImageView
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/create"
+                android:id="@+id/create"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             android:layout_weight="1"
-            android:id="@+id/account" />
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:text="地圖"
+                android:textAlignment="center"
+                android:layout_marginRight="10dp"
+                />
+
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/goomap"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/google" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:text="收藏"
+                android:textAlignment="center"
+                android:layout_marginRight="10dp"
+                />
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/my"
+                android:layout_weight="1"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/account"
+                android:scaleType="centerCrop" />
+
+
+        </LinearLayout>
+
+
+
+
+
 
 
     </LinearLayout>
@@ -55,8 +173,6 @@
         android:layout_width="match_parent"
         android:id="@+id/for_change_view"
         android:layout_height="match_parent"
-        android:layout_above="@+id/linearLayout">
-
-    </RelativeLayout>
+        android:layout_above="@+id/linearLayout"></RelativeLayout>
 
 </RelativeLayout>

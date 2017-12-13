@@ -18,19 +18,6 @@
             android:layout_marginBottom="3dp"
             android:id="@+id/linearintrip">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="add poi"
-                android:background="#d0dca1"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:id="@+id/add_poi"
-                />
-
 
         </LinearLayout>
     </RelativeLayout>
@@ -41,7 +28,6 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/upper"
         android:id="@+id/trip_recycle"
-        android:layout_above="@+id/all_ok"
         >
 
         <Button
@@ -49,17 +35,18 @@
             android:layout_height="wrap_content"
             android:id="@+id/first_trip_button"
             android:text="First Place"
-            android:background="#f3f7e2"
+            android:backgroundTint="#f3f7e2"
             android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true" />
 
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_view"
-            android:layout_above="@+id/last_place"
+            android:layout_margin="3dp"
+            android:layout_above="@+id/btnlayout"
             android:layout_below="@+id/first_trip_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -68,38 +55,53 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/last_place"
-            android:text="Last Place"
-            android:background="#f3f7e2"
+            android:id="@+id/save_result"
+            android:text="Save Result"
+            android:backgroundTint="#f3f7e2"
             android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true" />
-
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/goomap"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignEnd="@+id/last_place" />
+            android:layout_above="@+id/save_result"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:orientation="horizontal"
+            android:id="@+id/btnlayout"
+            android:layout_marginTop="3dp">
+            <!--<Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="add poi"
+                android:backgroundTint="#d0dca1"
+                android:layout_marginLeft="2dp"
+                android:layout_weight="1"
+                android:layout_marginRight="2dp"
+                android:id="@+id/add_poi"
+
+                 />-->
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OK"
+                android:layout_weight="1"
+                android:backgroundTint="#d0dca1"
+                android:id="@+id/all_ok"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                 />
 
 
+
+
+        </LinearLayout>
 
     </RelativeLayout>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="OK"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="3dp"
-        android:background="@drawable/mbdi"
-        android:id="@+id/all_ok" />
-
 
 
 </RelativeLayout>

@@ -59,7 +59,7 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/list_view"
-                android:layout_above="@+id/last_place"
+                android:layout_above="@+id/save_result"
                 android:layout_below="@+id/first_trip_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -68,7 +68,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/last_place"
+                android:id="@+id/save_result"
                 android:text="Last Place"
                 android:background="#f3f7e2"
                 android:layout_weight="1"
@@ -76,18 +76,6 @@
                 android:layout_marginRight="2dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true" />
-
-
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/goomap"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignEnd="@+id/last_place" />
 
 
         </RelativeLayout>

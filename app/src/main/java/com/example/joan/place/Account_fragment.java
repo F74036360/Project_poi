@@ -175,14 +175,12 @@ public class Account_fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Mainview = inflater.inflate(R.layout.fragment_account_fragment, container, false);
-
         ctx=getContext();
-
         client = new GoogleApiClient.Builder(getContext()).addApi(AppIndex.API).build();
         createfirst = (Button) Mainview.findViewById(R.id.first_trip_button);
         all_OK = (Button) Mainview.findViewById(R.id.all_ok);
        // Matrix=(Button) Mainview.findViewById(R.id.Matrix);
-        lastLocation=(Button)Mainview.findViewById(R.id.last_place);
+        lastLocation=(Button)Mainview.findViewById(R.id.save_result);
         add_POI=(Button)Mainview.findViewById(R.id.add_poi);
         poiAdapter = new POIAdapter();
         final RecyclerView mList = (RecyclerView) Mainview.findViewById(R.id.list_view);
@@ -1363,7 +1361,7 @@ public class Account_fragment extends Fragment {
 
             // holder.starttime.setText(new SimpleDateFormat("HH:mm").format(timeLine.get(position)));
             // holder.endtime.setText(new SimpleDateFormat("HH:mm").format(timeLine.get(position+1)));
-            holder.mapView.onCreate(null);
+            /*holder.mapView.onCreate(null);
             holder.mapView.setClickable(false);
             holder.mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -1374,7 +1372,7 @@ public class Account_fragment extends Fragment {
 
                 }
 
-            });
+            });*/
 
 
         }

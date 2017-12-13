@@ -6,11 +6,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
+import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -66,6 +68,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -85,6 +88,7 @@ public class Create_trip extends Fragment {
     //private EditText setTimeDuration;
     private Button all_OK;
     private Button add_POI;
+    private Button savePOI;
     private GoogleApiClient client;
     public  List<HashMap<String, String>> mainlist = null;
     private ImageButton poiitem_restaurant;
@@ -112,6 +116,7 @@ public class Create_trip extends Fragment {
     public ArrayList<String> all_poi_website=new ArrayList<>();
     public ArrayList<String> all_poi_openingtime=new ArrayList<>();
     //end of poi ref
+    public static Context ctx;
 
     //private  ImageView img_trip;
     public boolean found_best=false;
@@ -153,15 +158,14 @@ public class Create_trip extends Fragment {
         createfirst = (Button) Mainview.findViewById(R.id.first_trip_button);
         all_OK = (Button) Mainview.findViewById(R.id.all_ok);
         //=(Button) Mainview.findViewById(R.id.Matrix);
-        lastLocation=(Button)Mainview.findViewById(R.id.last_place);
+        savePOI=(Button)Mainview.findViewById(R.id.save_result);
         add_POI=(Button)Mainview.findViewById(R.id.add_poi);
         poiAdapter = new POIAdapter();
         final RecyclerView mList = (RecyclerView) Mainview.findViewById(R.id.list_view);
         final LinearLayoutManager layoutManager1 = new LinearLayoutManager(getContext());
         layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
         mList.setLayoutManager(layoutManager1);
-        map_direction=(FloatingActionButton)Mainview.findViewById(R.id.fab);
-        map_direction.setVisibility(View.INVISIBLE);
+        ctx=getContext();
         createfirst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -204,7 +208,7 @@ public class Create_trip extends Fragment {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int day) {
                                 formatDate = setDateFormat(year, month, day);
-                                SimpleDateFormat dateFormat=new SimpleDateFormat("EEEE");
+                                SimpleDateFormat dateFormat=new SimpleDateFormat("EEEE", Locale.ENGLISH);
                                 Date date=new Date(year,month,day-1);
                                 Log.e(""+formatDate,""+dateFormat.format(date));
                                 FirstWeekday=dateFormat.format(date);
@@ -226,15 +230,19 @@ public class Create_trip extends Fragment {
                         int hour = c.get(Calendar.HOUR_OF_DAY);
                         int minute = c.get(Calendar.MINUTE);
                         // Create a new instance of TimePickerDialog and return it
-                        new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                        new TimePickerDialog(ctx, new TimePickerDialog.OnTimeSetListener(){
 
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                Log.e("hour"+hourOfDay,""+minute);
                                 SimpleDateFormat time=new SimpleDateFormat("hh:mm aa");
-                                Time tme = new Time(hourOfDay,minute,0);//seconds by default set to zero
-                                first_time_set=time.format(tme);
-                                Log.e("Set time",""+time.format(tme));
-                                doSetTime.setText(""+time.format(tme));
+                                time.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                                Time t = Time.valueOf(hourOfDay+":"+minute+":00");
+                                first_time_set=time.format(t);
+                                doSetTime.setText(""+time.format(t));
+                                Log.e("hour",""+time.format(t));
+
+
                             }
                         }, hour, minute, false).show();
                     }
@@ -262,84 +270,35 @@ public class Create_trip extends Fragment {
         });
 
 
-        lastLocation.setOnClickListener(new View.OnClickListener() {
+        savePOI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater inflater1 = getActivity().getLayoutInflater();
-                final View v = inflater1.inflate(R.layout.alert_last_choice, null);
-                new AlertDialog.Builder(getActivity()).setTitle("終點選擇")
-                        .setView(v).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //visitDuration = setTimeDuration.getText().toString();
-                        //Toast.makeText(getContext(), formatDate + "\n" + formatTime + "\n" + msg + "\n" + visitDuration, Toast.LENGTH_LONG).show();
-                    }
-                }).show();
-                pickplace = (Button) v.findViewById(R.id.pickplace);
-                pickplace.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                        try {
-                            Intent intent = builder.build(getActivity());
-                            startActivityForResult(intent, PLACE_PICKER_REQUEST_LAST);
-                        } catch (GooglePlayServicesRepairableException e) {
-                            e.printStackTrace();
-                        } catch (GooglePlayServicesNotAvailableException e) {
-                            e.printStackTrace();
+                if(all_poi_name.size()>0)
+                {
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    final EditText edittext = new EditText(getContext());
+                    alert.setTitle("為此資料取名");
+                    alert.setView(edittext);
+                    alert.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            //What ever you want to do with the value
+                            String temptable = edittext.getText().toString();
+                            MainActivity.save_result.add_database(temptable,all_poi_name
+                                    ,all_poi_photo,all_poi_latlng,all_poi_rating,
+                                    all_poi_phone,all_poi_website,all_poi_openingtime);
                         }
-                    }
-                });
+                    });
+                    alert.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // what ever you want to do with No option.
+                        }
+                    });
+                    alert.show();
 
-                Button as_first=(Button)v.findViewById(R.id.as_start);
-                as_first.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        lastLocation.setText(first_place_msg);
-                        lastplace=firstplace;
-                    }
-                });
 
-                doSetDate = (Button) v.findViewById(R.id.datepicker_first);
-                doSetDate.setOnClickListener(new View.OnClickListener() {
-                    @TargetApi(Build.VERSION_CODES.N)
-                    @Override
-                    public void onClick(View view) {
-                        final Calendar c = Calendar.getInstance();
-                        mYear = c.get(Calendar.YEAR);
-                        mMonth = c.get(Calendar.MONTH+1);
-                        mDate = c.get(Calendar.DAY_OF_MONTH);
-                        new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int day) {
-                                formatDate = setDateFormat(year, month, day);
-                                doSetDate.setText(formatDate);
-                            }
-
-                        }, mYear, mMonth, mDate).show();
-                    }
-                });
-
-                doSetTime = (Button) v.findViewById(R.id.timepicker_first);
-                doSetTime.setOnClickListener(new View.OnClickListener() {
-                    @TargetApi(Build.VERSION_CODES.N)
-                    @Override
-                    public void onClick(View view) {
-                        final Calendar c = Calendar.getInstance();
-                        int hour = c.get(Calendar.HOUR_OF_DAY);
-                        int minute = c.get(Calendar.MINUTE);
-                        // Create a new instance of TimePickerDialog and return it
-                        new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
-
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                formatTime = hourOfDay + ":" + minute;
-                                doSetTime.setText(formatTime);
-
-                            }
-                        }, hour, minute, false).show();
-                    }
-                });
+                }
+                else Toast.makeText(getContext(),"尚未有結果",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -456,6 +415,7 @@ public class Create_trip extends Fragment {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 firstplace = PlacePicker.getPlace(data, getActivity());
+                lastplace=firstplace;
                 all_latlng.add(firstplace.getLatLng());
                 first_place_msg = String.format("%s", firstplace.getName());
                 pickplace.setText(first_place_msg);
@@ -466,10 +426,10 @@ public class Create_trip extends Fragment {
         else if(requestCode==PLACE_PICKER_REQUEST_LAST)
         {
             if (resultCode == Activity.RESULT_OK) {
-                lastplace = PlacePicker.getPlace(data, getActivity());
+                /*lastplace = PlacePicker.getPlace(data, getActivity());
                 last_place_msg = String.format("Place: %s", lastplace.getName());
                 pickplace.setText(last_place_msg);
-                Toast.makeText(getContext(), last_place_msg, Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), last_place_msg, Toast.LENGTH_LONG).show();*/
 
             }
         }
@@ -732,14 +692,8 @@ public class Create_trip extends Fragment {
                     else
                     {
                         //Log.e("all done","");
-                        map_direction.setVisibility(View.VISIBLE);
-                        map_direction.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
 
-                            }
-                        });
-                        for(int j=0;j<all_poi_name.size();j++)Log.e("name",""+all_poi_name.get(j));
+                        //for(int j=0;j<all_poi_name.size();j++)Log.e("name",""+all_poi_name.get(j));
                         myAdapter = new MyAdapter(all_poi_name, all_poi_photo, all_poi_latlng);
                         RecyclerView mList = (RecyclerView) Mainview.findViewById(R.id.list_view);
                         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

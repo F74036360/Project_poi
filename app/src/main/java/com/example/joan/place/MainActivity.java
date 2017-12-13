@@ -15,7 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -30,19 +29,24 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends FragmentActivity {
-
+    public static Context ctx;
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private final static int PLACE_PICKER_REQUEST = 1;
     public List<HashMap<String, String>> mainlist = null;
-    Button Createbtn;
-    Button Liked_btn;
-    //Button Schedule_btn;
-    Button Account_btn;
+    ImageView Createbtn;
+    ImageView Liked_btn;
+    ImageView Google;
+    ImageView Schedule;
+    ImageView Account_btn;
+    //FloatingActionButton poi2;
+    //FloatingActionButton poi3;
     //Button Map_btn;
     Create_trip create_trip;
     Liked like_frag;
-    Schedule_Frag schedule_frag;
+    public static Save_result save_result;
     Account_fragment account_frag;
+    OnePOI_Schedule onePOI_schedule;
+    OnePOI_saved onePOI_saved;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -54,41 +58,67 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        create_trip=new Create_trip();
-        like_frag=new Liked();
-        schedule_frag=new Schedule_Frag();
-        account_frag=new Account_fragment();
+        //R-tree 2 poi
+        ctx=getApplicationContext();
+        //R-tree 3 poi
+
+        //account
+        //account_frag=new Account_fragment();
+        //poi_schedule
+        onePOI_schedule=new OnePOI_Schedule();
+        //poi_save
+        onePOI_saved=new OnePOI_saved();
+        save_result=new Save_result();
         Context context=getApplicationContext();
-        Createbtn = (Button) findViewById(R.id.Createtrip_btn);
-        Liked_btn = (Button) findViewById(R.id.liked);
-        //Schedule_btn=(ImageButton) findViewById(R.id.schedule);
-        Account_btn=(Button) findViewById(R.id.account);
-        //Map_btn=(ImageButton) findViewById(R.id.map);
+        Liked_btn = (ImageView) findViewById(R.id.like);
+        Schedule=(ImageView)findViewById(R.id.schedule);
+        Account_btn=(ImageView) findViewById(R.id.account);
+        Google=(ImageView)findViewById(R.id.google);
+        //poi2=(FloatingActionButton) findViewById(R.id.poi2);
+        //poi3=(FloatingActionButton) findViewById(R.id.poi3);
+        Createbtn=(ImageView)findViewById(R.id.create);
 
         System.loadLibrary("sqliteX");
-
+        //fm.beginTransaction().replace(R.id.for_change_view, new Account_id()).commit();
+        fm.beginTransaction().replace(R.id.for_change_view, new Taiwan()).commit();
         Createbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fm.beginTransaction().replace(R.id.for_change_view, create_trip).commit();
+                fm.beginTransaction().replace(R.id.for_change_view, new Liked()).commit();
+            }
+        });
+
+        Google.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fm.beginTransaction().replace(R.id.for_change_view, new map()).commit();
 
             }
         });
 
+        Schedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fm.beginTransaction().replace(R.id.for_change_view, new Taiwan()).commit();
+
+            }
+        });
+
+        //one_poi_saved
         Liked_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fm.beginTransaction().replace(R.id.for_change_view, like_frag).commit();
+                fm.beginTransaction().replace(R.id.for_change_view,new OnePOI_Schedule()).commit();
 
             }
         });
 
 
-
+        //account
         Account_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fm.beginTransaction().replace(R.id.for_change_view, account_frag).commit();
+                fm.beginTransaction().replace(R.id.for_change_view,save_result ).commit();
 
             }
         });
@@ -171,7 +201,6 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onStart() {
         super.onStart();
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
