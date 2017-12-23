@@ -186,7 +186,7 @@ public class Liked extends Fragment {
 
         ctx=getContext();
         fragmentManager= getFragmentManager();
-        timeLine.clear();
+
         client = new GoogleApiClient.Builder(getContext()).addApi(AppIndex.API).build();
         createfirst = (Button) Mainview.findViewById(R.id.first_trip_button);
         all_OK = (Button) Mainview.findViewById(R.id.all_ok);
@@ -194,13 +194,54 @@ public class Liked extends Fragment {
         saveresult=(Button)Mainview.findViewById(R.id.save_result);
         //add_POI=(Button)Mainview.findViewById(R.id.add_poi);
         poiAdapter = new POIAdapter();
-        final RecyclerView mList = (RecyclerView) Mainview.findViewById(R.id.list_view);
-        final LinearLayoutManager layoutManager1 = new LinearLayoutManager(getContext());
-        layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
-        mList.setLayoutManager(layoutManager1);
+        if(anslist.size()==0)
+        {
+            timeLine.clear();
+            POI_length_list.clear();
+            POI_choice_list.clear();
+            final RecyclerView mList = (RecyclerView) Mainview.findViewById(R.id.list_view);
+            final LinearLayoutManager layoutManager1 = new LinearLayoutManager(getContext());
+            layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
+            mList.setLayoutManager(layoutManager1);
+            POI_choice_list.add("poi");
+            POI_choice_list.add("poi");
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
+            POI_length_list.add("00:30:00");
+            POI_length_list.add("00:30:00");
+            Log.e("",""+POI_length_list.size());
+            mList.setAdapter(poiAdapter);
+        }
+        else
+        {
+            Liked.MyAdapter myAdapter=new Liked.MyAdapter(Liked.all_poi_name,Liked.all_poi_photo,Liked.all_poi_latlng);
+            RecyclerView mList = (RecyclerView) Liked.Mainview.findViewById(R.id.list_view);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(ctx);
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            mList.setLayoutManager(layoutManager);
+            mList.setAdapter(myAdapter);
+        }
+
         createfirst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                POI_length_list.clear();
+                POI_choice_list.clear();
+                firstmemberlists.clear();
+                //fragmentManager= getFragmentManager();
+                timeLine.clear();
+                poiAdapter = new POIAdapter();
+                final RecyclerView mList = (RecyclerView) Mainview.findViewById(R.id.list_view);
+                final LinearLayoutManager layoutManager1 = new LinearLayoutManager(getContext());
+                layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
+                mList.setLayoutManager(layoutManager1);
+                POI_choice_list.add("poi");
+                POI_choice_list.add("poi");
+                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
+                POI_length_list.add("00:30:00");
+                POI_length_list.add("00:30:00");
+                Log.e("",""+POI_length_list.size());
+                mList.setAdapter(poiAdapter);
+                Count_Google_IDs.clear();
                 LayoutInflater inflater1 = getActivity().getLayoutInflater();
                 final View v = inflater1.inflate(R.layout.alert_choose_firat_location, null);
                 new AlertDialog.Builder(getActivity()).setTitle("起點選擇")
@@ -215,6 +256,8 @@ public class Liked extends Fragment {
                 pickplace.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+
                         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                         try {
                             Intent intent = builder.build(getActivity());
@@ -224,6 +267,7 @@ public class Liked extends Fragment {
                         } catch (GooglePlayServicesNotAvailableException e) {
                             e.printStackTrace();
                         }
+
                     }
                 });
 
@@ -241,10 +285,10 @@ public class Liked extends Fragment {
                             public void onDateSet(DatePicker view, int year, int month, int day) {
                                 formatDate = setDateFormat(year, month, day);
                                 SimpleDateFormat dateFormat=new SimpleDateFormat("EEEE", Locale.ENGLISH);
-                                Date date=new Date(year,month,day-1);
+                                Date date=new Date(year,month,day);
                                 Log.e(""+formatDate,""+dateFormat.format(date));
                                 FirstWeekday=dateFormat.format(date);
-                                doSetDate.setText(""+year+"-"+(month+1)+"-"+day);
+                                doSetDate.setText(""+(month+1)+"/"+day);
                             }
 
 
@@ -318,13 +362,7 @@ public class Liked extends Fragment {
             }
         });
 
-        POI_choice_list.add("poi");
-        POI_choice_list.add("poi");
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
-        POI_length_list.add("00:30:00");
-        POI_length_list.add("00:30:00");
-        Log.e("",""+POI_length_list.size());
-        mList.setAdapter(poiAdapter);
+
         /*add_POI.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
@@ -427,6 +465,16 @@ public class Liked extends Fragment {
             public void onClick(View view) {
                 Log.e("START TIME",""+System.currentTimeMillis());
 
+                all_poi_name.clear();
+                all_poi_rating.clear();
+                all_poi_latlng.clear();
+                all_poi_photo.clear();
+                all_poi_address.clear();
+                all_poi_phone.clear();
+                all_poi_website.clear();
+                all_poi_openingtime.clear();
+                anslist.clear();
+                cnt_poi_in_database.clear();
                 time1=System.currentTimeMillis();
                 R_db=SQLiteDatabase.openOrCreateDatabase(":memory:",null);
                 b_db=SQLiteDatabase.openOrCreateDatabase(":memory:",null);
@@ -537,8 +585,8 @@ public class Liked extends Fragment {
         googlePlacesUrl.append("&rankby=prominence");
         googlePlacesUrl.append("&keyword=" + nearbyPlace);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc");
-        //Log.d("getUrl_poi", googlePlacesUrl.toString());
+        googlePlacesUrl.append("&key=" + "AIzaSyCBpagH5hcVHgHPDk3QuW8-jEbnNvD6byg");
+        Log.d("getUrl_poi", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
 
     }
@@ -697,7 +745,7 @@ public class Liked extends Fragment {
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/details/json?");
         googlePlacesUrl.append("placeid=" + Place_id);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc");
+        googlePlacesUrl.append("&key=" + "AIzaSyCBpagH5hcVHgHPDk3QuW8-jEbnNvD6byg");
         //  Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }
@@ -959,6 +1007,7 @@ public class Liked extends Fragment {
             mainlist = list;
             int i=0;
             ArrayList<String> Google_IDs=new ArrayList<>();
+            Log.e("listsize",""+list.size());
             for (i = 0; i < list.size(); i++) {
                 // Getting a place from the places list
                 HashMap<String, String> hmPlace = list.get(i);
@@ -990,7 +1039,7 @@ public class Liked extends Fragment {
         String rtable="R_table"+count;
         String btable="B_table"+count;
 
-        double length=3;
+        double length=1;
         double lat_diff=length/110.574;  //利用距離的比例來算出緯度上的比例
         double lon_distance=111.320*Math.cos(latitude*Math.PI/180); //算出該緯度上的經度長度
         double lon_diff=length/lon_distance; //利用距離的比例來算出經度上的比例
@@ -1079,8 +1128,107 @@ public class Liked extends Fragment {
 
             return 0;
         }
+    }
+
+
+    public static int findanothersol(int count,double latitude,double longitude)
+    {
+        Log.e("into findanothersol"," count="+count);
+        String rtable="R_table"+count;
+        String btable="B_table"+count;
+
+        double length=3;
+        double lat_diff=length/110.574;  //利用距離的比例來算出緯度上的比例
+        double lon_distance=111.320*Math.cos(latitude*Math.PI/180); //算出該緯度上的經度長度
+        double lon_diff=length/lon_distance; //利用距離的比例來算出經度上的比例
+        //從中間點找半徑500m
+        double N_500 = latitude + Math.abs(lat_diff);
+        double S_500 = latitude - Math.abs(lat_diff);
+        double E_500 = longitude+ Math.abs(lon_diff);
+        double W_500 = longitude- Math.abs(lon_diff);
+
+        //四面八方
+        length=2;
+        lat_diff=length/110.574;  //利用距離的比例來算出緯度上的比例
+        lon_distance=111.320*Math.cos(latitude*Math.PI/180); //算出該緯度上的經度長度
+        lon_diff=length/lon_distance; //利用距離的比例來算出經度上的比例
+        double N_1000=latitude+Math.abs(lat_diff);
+        double S_1000=latitude-Math.abs(lat_diff);
+        double W_1000=longitude-Math.abs(lon_diff);
+        double E_1000=latitude+Math.abs(lon_diff);
+
+       /* Log.e("firstplace lat"," "+latitude);
+        Log.e("firstplace lng"," "+longitude);
+        Log.e("N ",""+N_500);
+        Log.e("S ",""+S_500);
+        Log.e("E ",""+E_500);
+        Log.e("W ",""+W_500);*/
+
+        String queryfrommid ="SELECT id FROM "+rtable
+                +" WHERE minX>="+W_500
+                +" AND maxX<="+E_500
+                +" AND minY>="+S_500+" AND maxY<="+N_500;
+        Cursor cursor = R_db.rawQuery(queryfrommid, null);
+        Cursor c;
+        int ans=-1;
+        String ansName=null;
+        LatLng anslatlng = null;
+        double rating=0.0;
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                c=b_db.rawQuery("SELECT * FROM " +btable+ " WHERE " + POI_ID + " = '" + id + "'", null);
+                if(c!=null)
+                {
+                    c.moveToFirst();
+                    //Log.e("name"," "+c.getString(1));
+                    firstmemberlists.add(new Firstmemberlist(c.getString(1),c.getDouble(3),c.getDouble(4),c.getInt(0)));
+                    /*if(Double.parseDouble(c.getString(6))>rating)
+                    {
+                        rating=Double.parseDouble(c.getString(6));
+                        ans=c.getInt(0);
+                        ansName=c.getString(1);
+                        anslatlng=new LatLng(c.getDouble(3),c.getDouble(4));
+                    }*/
+                }
+            } while (cursor.moveToNext());
+            for(int i=0;i<firstmemberlists.size();i++)
+            {
+                Firstmemberlist temp=Liked.firstmemberlists.get(i);
+                int id=temp.getid();
+                // double lat=temp.getLat();
+                // double lng=temp.getLng();
+
+            }
+            firstfound=1;
+            return 1;
+        }
+        else
+        {
+            /*int found=0;
+            String query_leftup ="SELECT id FROM "+rtable
+                    +" WHERE minX>="
+                    +W_1000+" AND maxX<="
+                    +longitude+" AND minY>="+latitude+" AND maxY<="+N_1000;
+            String query_leftdown="SELECT id FROM "+rtable
+                    +" WHERE minX>="
+                    +W_1000+" AND maxX<="
+                    +longitude+" AND minY>="+S_1000+" AND maxY<="+latitude;
+            String query_rightup="SELECT id FROM "+rtable
+                +" WHERE minX>="
+                +longitude+" AND maxX<="
+                +E_1000+" AND minY>="+latitude+" AND maxY<="+N_1000;
+            String query_rightdown="SELECT id FROM "+rtable
+                    +" WHERE minX>="
+                    +longitude+" AND maxX<="
+                    +E_1000+" AND minY>="+S_1000+" AND maxY<="+latitude;*/
+            Log.e("first no sol","sad...");
+
+            return 0;
+        }
 
     }
+
 
     public static int findsecsol(int count,double mid_Lat,double mid_lng,int midid)
     {
@@ -1179,7 +1327,7 @@ public class Liked extends Fragment {
               //  Log.e("start:"+L1," to: "+L2);
                 String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+L1.latitude+","+L1.longitude +
                         "&destinations="+L2.latitude+","+L2.longitude +
-                        "&key=AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
+                        "&key=AIzaSyCBpagH5hcVHgHPDk3QuW8-jEbnNvD6byg";
                 //Log.e("distance matrix","i="+i);
                 Distance_Matrix task = new Distance_Matrix(i);
                 task.execute(url);
@@ -1336,16 +1484,16 @@ public class Liked extends Fragment {
                                     temp.add(hPlaceDetails.get("name"));
                                     double lat = Double.parseDouble(hPlaceDetails.get("lat"));
                                     double lng = Double.parseDouble(hPlaceDetails.get("lng"));
-                                    all_poi_latlng.add(new LatLng(lat,lng));
+                                    /*all_poi_latlng.add(new LatLng(lat,lng));
                                     all_latlng.add(new LatLng(lat,lng));
                                     all_poi_rating.add(hPlaceDetails.get("rating"));
                                     all_poi_address.add(hPlaceDetails.get("address"));
                                     all_poi_phone.add(hPlaceDetails.get("formatted_phone"));
                                     all_poi_website.add(hPlaceDetails.get("website"));
-                                    all_poi_openingtime.add(hPlaceDetails.get(FirstWeekday));
+                                    all_poi_openingtime.add(hPlaceDetails.get(FirstWeekday));*/
                                     String photo = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photoreference="
                                             + hPlaceDetails.get("ref_photo") + "&key="
-                                            + "AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc";
+                                            + "AIzaSyCBpagH5hcVHgHPDk3QuW8-jEbnNvD6byg";
                                     b_name=hPlaceDetails.get("name");
                                     b_rating=hPlaceDetails.get("rating");
                                     b_lat=hPlaceDetails.get("lat");
@@ -1494,7 +1642,40 @@ public class Liked extends Fragment {
             s2.setTimeZone(TimeZone.getTimeZone("GMT+8"));
             // SimpleDateFormat s1=new SimpleDateFormat("ss");
             holder.starttime.setText("抵達時間"+s2.format(timeLine.get(position)));
-            holder.endtime.setText("離開時間"+s2.format(timeLine.get(position+1)));
+
+            Date path= null;
+            try {
+                SimpleDateFormat parseFormat = new SimpleDateFormat("HH:mm",Locale.ENGLISH);
+                parseFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                Date timeS=parseFormat.parse(parseFormat.format(timeLine.get(position)));
+                //Log.e("timeS",""+timeS);
+                when_to_get_middle=timeS.getTime();
+                //Log.e("times",""+when_to_get_middle);
+                //Log.e("middle First",""+parseFormat.format(when_to_get_middle));
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm",Locale.ENGLISH);
+                timeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                //Log.e("path",""+POI_length_list.get(position));
+                Date length=timeFormat.parse(POI_length_list.get(position));
+                when_to_get_middle+=length.getTime();
+                //Log.e("path",""+when_to_get_middle);
+                String sum = timeFormat.format(new Date(when_to_get_middle));
+                Log.e("sum",""+parseFormat.parse(parseFormat.format(when_to_get_middle)));
+                Date endtime=parseFormat.parse(parseFormat.format(when_to_get_middle));
+                holder.endtime.setText("離開時間"+s2.format(endtime));
+                //timeLine.add(parseFormat.parse(parseFormat.format(when_to_get_middle)));
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            //long when_to_get_middle1=path.getTime();
+            //long temp=when_to_get_middle+when_to_get_middle1;
+            //Log.e("middle",""+parseFormat.format(temp));
+
+
+
+
+           // holder.endtime.setText("離開時間"+s2.format(timeLine.get(position+1)));
             /*try {
                 Date timeS=s2.parse(s2.format(timeLine.get(position)));
                 when_to_get_middle=timeS.getTime();

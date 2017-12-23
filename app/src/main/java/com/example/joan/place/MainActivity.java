@@ -77,14 +77,14 @@ public class MainActivity extends FragmentActivity {
         //poi2=(FloatingActionButton) findViewById(R.id.poi2);
         //poi3=(FloatingActionButton) findViewById(R.id.poi3);
         Createbtn=(ImageView)findViewById(R.id.create);
-
+        final Liked liked=new Liked();
         System.loadLibrary("sqliteX");
         //fm.beginTransaction().replace(R.id.for_change_view, new Account_id()).commit();
         fm.beginTransaction().replace(R.id.for_change_view, new Taiwan()).commit();
         Createbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fm.beginTransaction().replace(R.id.for_change_view, new Liked()).commit();
+                fm.beginTransaction().replace(R.id.for_change_view, liked).commit();
             }
         });
 

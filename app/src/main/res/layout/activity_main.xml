@@ -96,7 +96,10 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/create"
                 android:id="@+id/create"
-                android:layout_marginBottom="5dp"
+                android:scaleType="centerCrop"
+                android:layout_marginLeft="18dp"
+                android:layout_marginBottom="7dp"
+                android:layout_marginRight="20dp"
                 android:layout_weight="1"/>
         </LinearLayout>
 
@@ -124,8 +127,8 @@
                 android:src="@drawable/goomap"
                 android:layout_weight="1"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
-                android:scaleType="centerCrop"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
                 android:id="@+id/google" />
 
         </LinearLayout>
@@ -154,9 +157,11 @@
                 android:layout_marginTop="5dp"
                 android:src="@drawable/my"
                 android:layout_weight="1"
+                android:layout_marginLeft="5dp"
                 android:layout_marginBottom="5dp"
                 android:id="@+id/account"
-                android:scaleType="centerCrop" />
+
+                 />
 
 
         </LinearLayout>
