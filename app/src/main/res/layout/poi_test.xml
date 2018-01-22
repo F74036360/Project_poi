@@ -304,11 +304,12 @@
                 android:gravity="center_vertical" />
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:inputType="text"
-                android:layout_margin="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:id="@+id/self_typed" />
             <Button
                 android:layout_width="match_parent"

@@ -30,7 +30,7 @@ package="com.example.joan.place">
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/. 
         -->
-    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCBpagH5hcVHgHPDk3QuW8-jEbnNvD6byg" />
+    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDomABgA1RgXQaE31JakIQi9Cw66nhHGAc" />
     <meta-data android:name="com.google.android.gms.vision" android:value="@integer/google_play_services_version" />
 
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />

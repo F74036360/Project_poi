@@ -43,30 +43,28 @@
             android:layout_alignParentEnd="true" />
 
 
+       <!--
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_view"
             android:layout_margin="3dp"
-            android:layout_above="@+id/btnlayout"
             android:layout_below="@+id/first_trip_button"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="100dp" />-->
 
-
-        <Button
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/save_result"
-            android:text="Save Result"
-            android:backgroundTint="#f3f7e2"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/first_trip_button"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_marginTop="5dp"
+            android:layout_above="@+id/all_ok" />
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/save_result"
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
@@ -85,21 +83,20 @@
 
                  />-->
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="OK"
-                android:layout_weight="1"
-                android:backgroundTint="#d0dca1"
-                android:id="@+id/all_ok"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
-                 />
-
-
-
 
         </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:layout_weight="1"
+            android:backgroundTint="#d0dca1"
+            android:id="@+id/all_ok"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/btnlayout" />
 
     </RelativeLayout>
 
