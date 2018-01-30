@@ -1,0 +1,86 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.joan.place.East">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="horizontal"
+            >
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:layout_weight="1"
+                android:text="宜蘭"
+                android:id="@+id/Yi"
+                android:backgroundTint="#e4ef8f" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="基隆"
+                android:backgroundTint="#e4ef8f"
+                android:id="@+id/Gi" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="#e4ef8f"
+                android:text="花蓮"
+                android:id="@+id/Hua" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="#e4ef8f"
+                android:text="臺東"
+                android:id="@+id/Tai" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_weight="5"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:orientation="horizontal"
+
+            >
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="自訂搜索範圍"
+                android:id="@+id/search"
+                android:layout_weight="1"
+                android:backgroundTint="#e2f0b5" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/POI"
+                android:layout_weight="4"
+                android:text="POI"
+                android:backgroundTint="#e2f0b5"
+                />
+        </LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_view"
+            android:layout_weight="1.2"
+            android:layout_margin="10dp"
+            android:layout_above="@+id/save_result"
+            android:layout_below="@+id/btnlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+</RelativeLayout>
